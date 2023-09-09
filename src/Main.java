@@ -29,7 +29,5 @@ public class Main {
             }
         }
         scanner.close();
-        
-        new containerCRUD();
     }
 }
