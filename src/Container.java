@@ -3,7 +3,7 @@ public class Container {
     private int ID;
     private float Weight;
     private ContainerType Type;
-    private Port p_number;
+    private Port port;
 
     // Define an enum for the container types
     enum ContainerType {
@@ -19,6 +19,7 @@ public class Container {
         this.ID = ID;
         Weight = weight;
         Type = type;
+        port = null;
     }
 
     // Setter & Getter
@@ -43,6 +44,15 @@ public class Container {
     }
     public void setType(ContainerType type) {
         this.Type = type;
+    }
+
+    // Getter and Setter for the Port
+    public Port getPort() {
+        return port;
+    }
+
+    public void setPort(Port port) {
+        this.port = port;
     }
 
     @Override
