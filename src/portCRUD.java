@@ -20,29 +20,7 @@ public class portCRUD {
         int landingCap = scanner.nextInt();
         Port portAdd = new Port(portID, portName, latitude, longitude, storingCap, landingCap);
         ports.add(portAdd);
-        try {
-            FileWriter fileWriter = new FileWriter("resources/port_data.txt", true);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            for (Port port: ports) {
-                bufferedWriter.write(String.valueOf(port.getP_number()));
-                bufferedWriter.write(" ");
-                bufferedWriter.write(port.getPortName());
-                bufferedWriter.write(" ");
-                bufferedWriter.write(String.valueOf(port.getLatitude()));
-                bufferedWriter.write(" ");
-                bufferedWriter.write(String.valueOf(port.getLongitude()));
-                bufferedWriter.write(" ");
-                bufferedWriter.write(String.valueOf(port.getStoringCap()));
-                bufferedWriter.write(" ");
-                bufferedWriter.write(String.valueOf(port.getLandingCap()));
-                bufferedWriter.newLine();
-            }
-            bufferedWriter.close();
-            System.out.println("change has been saved!");
-        }
-        catch (IOException e) {
-            System.err.println("An error occurred while writing the file: " + e.getMessage());
-        }
+        writeBackToFile(ports);
     }
     static int autoGeneratePortID() {
         int portID = 1;
