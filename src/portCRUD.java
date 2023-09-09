@@ -77,6 +77,9 @@ public class portCRUD {
                 Port port = new Port(portID, portName, latitude, longitude, storingCap, landingCap);
                 ports.add(port);
             }
+            if (ports.isEmpty()) {
+                System.out.println("There is no data in the file.");
+            }
         }
         catch (IOException e) {
             System.err.println("An error occurred while reading the file: " + e.getMessage());
@@ -135,7 +138,7 @@ public class portCRUD {
     static void deletePort() {
         List<Port> ports = readPorts();
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter port ID you want to remove: ");
+        System.out.print("Enter port ID you want to remove: ");
         int tempPortID = scanner.nextInt();
         if (tempPortID > ports.toArray().length) {
             System.out.println("You enter wrong ID");

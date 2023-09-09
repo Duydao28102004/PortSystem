@@ -13,6 +13,7 @@ public class Main {
             System.out.println("0. Exit the program");
             System.out.print("Choose your command: ");
             userChoice = scanner.nextInt();
+            System.out.println("   *********   ");
             if (userChoice == 1) {
                 portCRUD.createPort();
             } else if (userChoice == 2) {
