@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.lang.Math;
 
 public class Port {
     private int p_number;
@@ -8,21 +6,16 @@ public class Port {
     private double longitude;
     private int storingCap;
     private int landingCap;
-    private int containerNumber;
 
-//    default value
-    public Port() {
-    }
 
 //    constructor
-    public Port(int p_number, String portName, double latitude, double longitude, int storingCap, int landingCap, int containerNumber) {
+    public Port(int p_number, String portName, double latitude, double longitude, int storingCap, int landingCap) {
         this.p_number = p_number;
         this.portName = portName;
         this.latitude = latitude;
         this.longitude = longitude;
         this.storingCap = storingCap;
         this.landingCap = landingCap;
-        this.containerNumber = containerNumber;
     }
 
 //    get value from the user
@@ -50,10 +43,6 @@ public class Port {
         return landingCap;
     }
 
-    public int getContainerNumber() {
-        return containerNumber;
-    }
-
 //    set value from user
     public void setP_number(int p_number) {
         this.p_number = p_number;
@@ -77,13 +66,5 @@ public class Port {
 
     public void setLandingCap(int landingCap) {
         this.landingCap = landingCap;
-    }
-
-    public void setContainerNumber(int containerNumber) {
-        this.containerNumber = containerNumber;
-    }
-//    unique method
-    public double getDistanceBetweenPorts(Port otherPort) {
-        return Math.sqrt(Math.pow(otherPort.latitude - this.latitude, 2) + Math.pow(otherPort.longitude - this.latitude, 2));
     }
 }
