@@ -15,7 +15,7 @@ public class containerCRUD {
     String filename = "Containers.txt";
     String ports = "Ports.txt";
 
-    public containerCRUD() {
+    static void containerCRUD() {
         try {
             System.out.println("1. Create Container");
             System.out.println("2. Read Containers");
@@ -427,12 +427,6 @@ public class containerCRUD {
                 }
             }
         }
-
         return portInfoMap;
     }
-
-
-
-
-
 }
