@@ -1,16 +1,27 @@
 import java.io.*;
-import java.nio.file.*;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
-import java.util.HashMap;
-import java.util.Map;
 
 public class containerCRUD {
     static void createContainer() {
-        ArrayList<Container> containers = new ArrayList<>();
+        List<Port> ports = portCRUD.readPorts();
+        try {
+            FileReader fileReader = new FileReader("resources/container_data.txt");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] parts = line.split(" ");
+                int pID = Integer.parseInt(parts[0]);
+                int cID = Integer.parseInt(parts[1]);
+                double w = Double.parseDouble(parts[2]);
+                int t = Integer.parseInt(parts[3]);
+                Container tempContainer = new Container(cID,w,t);
+                ports.get(pID).addContainer(tempContainer);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         Scanner scanner = new Scanner(System.in);
         int ID = autoGenerateContainerID();
         System.out.print("Enter container weight: ");
@@ -24,11 +35,15 @@ public class containerCRUD {
         System.out.print("Enter container type(1 -> 5): ");
         int type = scanner.nextInt();
         System.out.println("Available port:");
-        portCRUD.readPorts();
+        for (Port port : ports) {
+            System.out.println(port.getP_number());
+        }
         System.out.println("Choose port where container located (port ID): ");
-        int
-
-
+        int tempPortID = scanner.nextInt();
+        int portID = tempPortID - 1;
+        Container container = new Container(ID, weight, type);
+        ports.get(portID).addContainer(container);
+        writeBackToFileContainer(ports);
     }
     static int autoGenerateContainerID() {
         int containerID = 1;
@@ -46,18 +61,22 @@ public class containerCRUD {
         }
         return containerID;
     }
-    static void writeBackToFile(List<Container> containers) {
+    static void writeBackToFileContainer(List<Port> ports) {
         try {
             FileWriter fileWriter = new FileWriter("resources/container_data.txt");
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            for (Container container: containers) {
-                bufferedWriter.write(String.valueOf(container.getC_number()));
-                bufferedWriter.write(" ");
-                bufferedWriter.write(String.valueOf(container.getWeight()));
-                bufferedWriter.write(" ");
-                bufferedWriter.write(String.valueOf(container.getType()));
-                bufferedWriter.write(" ");
-                bufferedWriter.write(String.valueOf(container.getPort()));
+            for (Port port : ports) {
+                List<Container> containers = port.getContainers();
+                for (Container container : containers) {
+                    bufferedWriter.write(String.valueOf(container.getC_number()));
+                    bufferedWriter.write(" ");
+                    bufferedWriter.write(String.valueOf(port.getP_number()));
+                    bufferedWriter.write(" ");
+                    bufferedWriter.write(String.valueOf(container.getWeight()));
+                    bufferedWriter.write(" ");
+                    bufferedWriter.write(String.valueOf(container.getType()));
+                    bufferedWriter.newLine();
+                }
             }
             bufferedWriter.close();
             System.out.println("change has been saved!");

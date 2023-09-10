@@ -1,3 +1,5 @@
+import java.util.List;
+import java.util.ArrayList;
 
 public class Port {
     private int p_number;
@@ -6,6 +8,7 @@ public class Port {
     private double longitude;
     private int storingCap;
     private int landingCap;
+    private  List<Container> containers;
 
 
 //    constructor
@@ -16,6 +19,7 @@ public class Port {
         this.longitude = longitude;
         this.storingCap = storingCap;
         this.landingCap = landingCap;
+        this.containers = new ArrayList<>();
     }
 
 //    get value from the user
@@ -66,5 +70,18 @@ public class Port {
 
     public void setLandingCap(int landingCap) {
         this.landingCap = landingCap;
+    }
+    public void addContainer(Container container) {
+        if (containers.size() < storingCap) {
+            containers.add(container);
+        } else {
+            System.out.println("Port has reached its storing capacity. Cannot add more containers.");
+        }
+    }
+    public void removeContainer(Container container) {
+        containers.remove(container);
+    }
+    public List<Container> getContainers() {
+        return containers;
     }
 }
