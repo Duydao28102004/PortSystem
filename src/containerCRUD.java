@@ -11,45 +11,14 @@ import java.util.Map;
 
 public class containerCRUD {
 
-    Scanner scanner = new Scanner(System.in);
-    String filename = "Containers.txt";
-    String ports = "Ports.txt";
+    static Scanner scanner = new Scanner(System.in);
+    static String filename = "resources/containers_data.txt";
+    static String ports = "resources/port_data.txt";
 
-    public containerCRUD() {
-        try {
-            System.out.println("1. Create Container");
-            System.out.println("2. Read Containers");
-            System.out.println("3. Update");
-            System.out.println("4. Delete");
-            System.out.println("5. Stop the process");
-            System.out.print("Enter a number to choose: ");
-            String choice = scanner.nextLine();
-            if (choice.equals("1")) {
-                createContainer();
-            } else if (choice.equals("2")) {
-                readContainer();
-            } else if (choice.equals("3")) {
-                updateContainer();
-            } else if (choice.equals("4")) {
-                deleteContainer();
-            } else if (choice.equals("5")) {
-                System.out.println("End the process");
-            }
-            else {
-                System.out.println("Invalid choice");
-                System.out.println("Press any key to continue");
-                scanner.nextLine();
-                new containerCRUD();
-            }
-        } catch (Exception ex) {
-            System.out.print("Error");
-        }
-    }
-
-    void createContainer() {
+    static void createContainer() {
         try {
             Path path = Paths.get(filename);
-            Path portPath = Paths.get(ports);
+            Path portPath = Paths.get("port_data.txt"); // Update the path to the port data file
 
             try {
                 if (!Files.exists(path)) {
@@ -70,7 +39,7 @@ public class containerCRUD {
             System.out.println("\n CREATE CONTAINER \n ");
 
             // Generate a new ID based on existing IDs in the file
-            int newID = generateNewID();
+            int newID = generateNewID(); // Pass the path of the container file
 
             System.out.println("Generated ID: " + newID);
             System.out.println("Enter Weight: ");
@@ -114,19 +83,31 @@ public class containerCRUD {
                     return; // Exit the method
             }
 
-            // Read the existing port information from ports.txt and store it in a map
-            Map<Integer, String> portIdToNameMap = readPortInfoFromFile(portPath);
+            // Read the existing port information from port_data.txt
+            List<Port> ports = portCRUD.readPorts();
+
+            // Prompt the user to select a port
+            System.out.println("Available Ports:");
+            for (Port port : ports) {
+                System.out.println(port.getP_number() + ". " + port.getPortName());
+            }
 
             // Prompt the user to enter the port ID
-            System.out.print("Enter new Port ID: ");
-            int PortID = Integer.parseInt(scanner.nextLine());
+            System.out.print("Enter the Port ID for the container: ");
+            int selectedPortID = Integer.parseInt(scanner.nextLine());
 
-            // Look up the port name corresponding to the entered port ID
-            String portName = portIdToNameMap.get(PortID);
+            // Find the selected port based on the port ID
+            Port selectedPort = null;
+            for (Port port : ports) {
+                if (port.getP_number() == selectedPortID) {
+                    selectedPort = port;
+                    break;
+                }
+            }
 
-            if (portName != null) {
+            if (selectedPort != null) {
                 // Write container details to the file
-                writer.write(newID + "," + weight + "," + typeStr + "," + portName);
+                writer.write(newID + "," + weight + "," + typeStr + "," + selectedPort.getPortName());
                 writer.newLine();
                 System.out.println("Container has been successfully created!");
             } else {
@@ -145,28 +126,28 @@ public class containerCRUD {
         }
     }
 
-    // Read existing port names from the file
-    public static List<String> readPortNamesFromFile(Path fileName) throws IOException {
-        List<String> portNames = new ArrayList<>();
+
+    // Read existing port information from ports.txt and store it in a map
+    private static Map<Integer, String> readPortInfoFromFile(Path fileName) throws IOException {
+        Map<Integer, String> portInfoMap = new HashMap<>();
 
         try (BufferedReader reader = Files.newBufferedReader(fileName)) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
+                String[] parts = line.split(" ");
                 if (parts.length >= 2) {
+                    int portID = Integer.parseInt(parts[0].trim()); // Extract the port ID from the first column (index 0)
                     String portName = parts[1].trim(); // Extract the port name from the second column (index 1)
-                    portNames.add(portName);
+                    portInfoMap.put(portID, portName);
                 }
             }
         }
 
-        return portNames;
+        return portInfoMap;
     }
 
-
-
     // Method to generate a new ID based on existing IDs in the file
-    private int generateNewID() {
+    private static int generateNewID() {
         try {
             Path path = Paths.get(filename);
             if (!Files.exists(path)) {
@@ -200,7 +181,7 @@ public class containerCRUD {
 
 
 
-    void readContainer() {
+    static void readContainer() {
         try {
             Path path = Paths.get(filename);
             InputStream input = Files.newInputStream(path);
@@ -236,7 +217,7 @@ public class containerCRUD {
         }
     }
 
-    void deleteContainer() {
+    static void deleteContainer() {
         try {
             Path path = Paths.get(filename);
             InputStream input = Files.newInputStream(path);
@@ -293,7 +274,7 @@ public class containerCRUD {
         System.out.println("File operation performed successfully");
     }
 
-    void updateContainer() {
+    static void updateContainer() {
         try {
             // Define the paths for Containers.txt and ports.txt
             Path containersPath = Paths.get(filename);
@@ -412,24 +393,7 @@ public class containerCRUD {
         }
     }
 
-    // Read existing port information from ports.txt and store it in a map
-    private Map<Integer, String> readPortInfoFromFile(Path fileName) throws IOException {
-        Map<Integer, String> portInfoMap = new HashMap<>();
 
-        try (BufferedReader reader = Files.newBufferedReader(fileName)) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(",");
-                if (parts.length >= 2) {
-                    int portID = Integer.parseInt(parts[0].trim()); // Extract the port ID from the first column (index 0)
-                    String portName = parts[1].trim(); // Extract the port name from the second column (index 1)
-                    portInfoMap.put(portID, portName);
-                }
-            }
-        }
-
-        return portInfoMap;
-    }
 
 
 
