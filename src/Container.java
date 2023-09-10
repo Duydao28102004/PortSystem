@@ -1,28 +1,37 @@
 public class Container {
 
-    private int c_number;
-    private double Weight;
-    private int Type;
-    private Port p_number;
+    private int ID;
+    private float Weight;
+    private ContainerType Type;
+    private Port port;
 
     // Define an enum for the container types
+    enum ContainerType {
+        DRY_STORAGE,
+        OPEN_TOP,
+        OPEN_SIDE,
+        REFRIGERATED,
+        LIQUID
+    }
 
     // Constructor
-    public Container(int c_number, float weight, int type, Port p_number) {
-        this.c_number = c_number;
+    public Container(int ID, float weight, ContainerType type) {
+        this.ID = ID;
         Weight = weight;
         Type = type;
-        p_number = null;
+        port = null;
     }
 
     // Setter & Getter
-    public int getC_number() {
-        return c_number;
+    public int getID() {
+        return ID;
     }
-    public void setC_number(int c_number) {
-        this.c_number = c_number;
+
+    public void setID(int ID) {
+        this.ID = ID;
     }
-    public double getWeight() {
+
+    public float getWeight() {
         return Weight;
     }
 
@@ -30,38 +39,29 @@ public class Container {
         Weight = weight;
     }
 
-    public int getType() {
+    public ContainerType getType() {
         return Type;
     }
-
-    public void setType(int type) {
-        Type = type;
+    public void setType(ContainerType type) {
+        this.Type = type;
     }
 
     // Getter and Setter for the Port
-
-    public enum ContainerType {
-        DRY_STORAGE(1),
-        OPEN_TOP(2),
-        OPEN_SIDE(3),
-        REFRIGERATED(4),
-        LIQUID(5);
-
-        private final int value;
-
-        ContainerType(int value) {
-            this.value = value;
-        }
-        public int getValue() {
-            return value;
-        }
-        public static ContainerType fromValue(int value) {
-            for (ContainerType type : ContainerType.values()) {
-                if (type.value == value) {
-                    return type;
-                }
-            }
-            throw new IllegalArgumentException("Invalid ContainerType value: " + value);
-        }
+    public Port getPort() {
+        return port;
     }
+
+    public void setPort(Port port) {
+        this.port = port;
+    }
+
+    @Override
+    public String toString() {
+        return "Container{" +
+                "ID=" + ID +
+                ", Weight=" + Weight +
+                ", Type=" + Type +
+                '}';
+    }
+
 }
