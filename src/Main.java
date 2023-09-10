@@ -4,28 +4,64 @@ public class Main {
     public static void main(String[] args) {
         int userChoice = 1;
         Scanner scanner = new Scanner(System.in);
+
         while (userChoice != 0) {
             System.out.println("Port command list");
             System.out.println("1. Create port");
             System.out.println("2. Print all ports");
             System.out.println("3. Update port");
             System.out.println("4. Delete port");
+            System.out.println("5. Create container");
+            System.out.println("6. Print all containers");
+            System.out.println("7. Update container");
+            System.out.println("8. Delete container");
             System.out.println("0. Exit the program");
             System.out.print("Choose your command: ");
             userChoice = scanner.nextInt();
             System.out.println("   *********   ");
-            if (userChoice == 1) {
-                portCRUD.createPort();
-            } else if (userChoice == 2) {
-                portCRUD.printPorts();
-            } else if (userChoice == 3) {
-                portCRUD.updatePorts();
-            } else if (userChoice == 4) {
-                portCRUD.deletePort();
-            } else if (userChoice == 0) {
-                System.out.println("goodbye!");
-            } else {
-                System.out.println("You enter wrong command code!");
+
+            switch (userChoice) {
+                case 1:
+                    portCRUD.createPort();
+                    break;
+                case 2:
+                    portCRUD.printPorts();
+                    break;
+                case 3:
+                    portCRUD.updatePorts();
+                    break;
+                case 4:
+                    portCRUD.deletePort();
+                    break;
+                case 5:
+                    containerCRUD.createContainer();
+                    break;
+                case 6:
+                    containerCRUD.printContainer();
+                    break;
+                case 7:
+                    containerCRUD.printContainer();
+                    containerCRUD.updateContainer();
+                    break;
+                case 8:
+                    containerCRUD.printContainer();
+                    containerCRUD.deleteContainer();
+                    break;
+                case 0:
+                    System.out.println("Goodbye!");
+                    break;
+                default:
+                    System.out.println("You entered a wrong command code!");
+                    break;
+            }
+
+            if (userChoice != 0) {
+                System.out.print("Do you want to continue? (1 for Yes, 0 for No): ");
+                int continueChoice = scanner.nextInt();
+                if (continueChoice != 1) {
+                    userChoice = 0;
+                    System.out.println("Goodbye!");
+                }
             }
         }
         scanner.close();

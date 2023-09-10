@@ -3,16 +3,14 @@ public class Container {
     private int c_number;
     private double Weight;
     private int Type;
-    private Port p_number;
 
     // Define an enum for the container types
 
     // Constructor
-    public Container(int c_number, float weight, int type, Port p_number) {
+    public Container(int c_number, double weight, int type) {
         this.c_number = c_number;
         Weight = weight;
         Type = type;
-        p_number = null;
     }
 
     // Setter & Getter
@@ -26,7 +24,7 @@ public class Container {
         return Weight;
     }
 
-    public void setWeight(float weight) {
+    public void setWeight(double weight) {
         Weight = weight;
     }
 
@@ -63,5 +61,8 @@ public class Container {
             }
             throw new IllegalArgumentException("Invalid ContainerType value: " + value);
         }
+    }
+    public String getContainerTypeName() {
+        return ContainerType.fromValue(Type).name();
     }
 }
