@@ -24,7 +24,7 @@ public class Container {
         return Weight;
     }
 
-    public void setWeight(float weight) {
+    public void setWeight(double weight) {
         Weight = weight;
     }
 
@@ -61,5 +61,8 @@ public class Container {
             }
             throw new IllegalArgumentException("Invalid ContainerType value: " + value);
         }
+    }
+    public String getContainerTypeName() {
+        return ContainerType.fromValue(Type).name();
     }
 }
