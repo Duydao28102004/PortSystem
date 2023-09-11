@@ -20,7 +20,7 @@ public class portCRUD {
         int landingCap = scanner.nextInt();
         Port portAdd = new Port(portID, portName, latitude, longitude, storingCap, landingCap);
         ports.add(portAdd);
-        writeBackToFile(ports);
+        writeBackToFile(ports, true);
     }
     static int autoGeneratePortID() {
         int portID = 1;
@@ -111,28 +111,35 @@ public class portCRUD {
             ports.get(portID).setLandingCap(Integer.parseInt(temp5));
         }
         scanner.close();
-        writeBackToFile(ports);
+        writeBackToFile(ports, false);
     }
     static void deletePort() {
-        List<Port> ports = readPorts();
+        List<Port> ports = containerCRUD.readContainer();
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter port ID you want to remove: ");
         int tempPortID = scanner.nextInt();
-        if (tempPortID > ports.toArray().length) {
-            System.out.println("You enter wrong ID");
+        int portID = tempPortID - 1;
+
+        if (portID < 0 || portID >= ports.size()) {
+            System.out.println("Invalid port ID.");
             return;
         }
-        int portID = tempPortID - 1;
+        Port portToRemove = ports.get(portID);
+        ArrayList<Container> containersToRemove = new ArrayList<>(portToRemove.getContainers());
+
+        for (Container container : containersToRemove) {
+            portToRemove.removeContainer(container);
+        }
         ports.remove(portID);
-        // Iterate through the list and reassign new port IDs starting from 1
         for (int i = 0; i < ports.size(); i++) {
             ports.get(i).setP_number(i + 1);
         }
-        writeBackToFile(ports);
+        writeBackToFile(ports, false);
+        containerCRUD.writeBackToFileContainer(ports);
     }
-    static void writeBackToFile(List<Port> ports) {
+    static void writeBackToFile(List<Port> ports, Boolean append) {
         try {
-            FileWriter fileWriter = new FileWriter("resources/port_data.txt");
+            FileWriter fileWriter = new FileWriter("resources/port_data.txt", append);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             for (Port port: ports) {
                 bufferedWriter.write(String.valueOf(port.getP_number()));
