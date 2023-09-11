@@ -37,14 +37,13 @@ public class Main {
                     containerCRUD.createContainer();
                     break;
                 case 6:
-                    containerCRUD.printContainer();
+                    containerCRUD.printSelectedContainers();
                     break;
                 case 7:
-                    containerCRUD.printContainer();
                     containerCRUD.updateContainer();
                     break;
                 case 8:
-                    containerCRUD.printContainer();
+                    containerCRUD.printSelectedContainers();
                     containerCRUD.deleteContainer();
                     break;
                 case 0:
