@@ -3,14 +3,16 @@ public class Container {
     private int c_number;
     private double Weight;
     private int Type;
+    private int serialCode;
 
     // Define an enum for the container types
 
     // Constructor
-    public Container(int c_number, double weight, int type) {
+    public Container(int c_number, double weight, int type, int serialCode) {
         this.c_number = c_number;
         Weight = weight;
         Type = type;
+        this.serialCode = serialCode;
     }
 
     // Setter & Getter
@@ -36,6 +38,13 @@ public class Container {
         Type = type;
     }
 
+    public int getSerialCode() {
+        return serialCode;
+    }
+
+    public void setSerialCode(int serialCode) {
+        this.serialCode = serialCode;
+    }
     // Getter and Setter for the Port
 
     public enum ContainerType {

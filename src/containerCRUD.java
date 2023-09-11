@@ -1,4 +1,5 @@
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -29,13 +30,15 @@ public class containerCRUD {
         }
         if (checker == 0) {
             System.out.println("No available ports for container storage.");
-            return; // Exit the method
+            return;
         }
         System.out.println("Choose port where container located (port ID): ");
         int tempPortID = scanner.nextInt();
         int portID = tempPortID - 1;
         int ID = autoGenerateContainerID(tempPortID);
-        Container container = new Container(ID, weight, type);
+        int serialCode = generateSerialCode();
+
+        Container container = new Container(ID, weight, type, serialCode);
         ports.get(portID).addContainer(container);
         writeBackToFileContainer(ports);
     }
@@ -58,6 +61,16 @@ public class containerCRUD {
         }
         return containerID;
     }
+    static int generateSerialCode() {
+        LocalDateTime now = LocalDateTime.now();
+        int serialCode = now.getYear() * 100000000 +
+                now.getMonthValue() * 1000000 +
+                now.getDayOfMonth() * 10000 +
+                now.getHour() * 100 +
+                now.getMinute();
+        System.out.println("Port created with serial code: "+serialCode);
+        return serialCode;
+    }
     static ArrayList<Port> readContainer() {
         ArrayList<Port> ports = (ArrayList<Port>) portCRUD.readPorts();
         try {
@@ -70,7 +83,8 @@ public class containerCRUD {
                     int c_number = Integer.parseInt(parts[1]);
                     double weight = Double.parseDouble(parts[2]);
                     int type = Integer.parseInt(parts[3]);
-                    Container tempCon = new Container(c_number, weight, type);
+                    int serialCode = Integer.parseInt(parts[4]);
+                    Container tempCon = new Container(c_number, weight, type, serialCode);
                     int portID = Integer.parseInt(parts[0]) - 1;
                     ports.get(portID).addContainer(tempCon);
                 } else {
@@ -86,60 +100,89 @@ public class containerCRUD {
     }
     static void printContainer() {
         List<Port> ports = readContainer();
-        for (Port port: ports) {
-            System.out.println("Port ID: "+port.getP_number()+". "+port.getPortName());
+        for (Port port : ports) {
+            System.out.println("Port ID: " + port.getP_number() + ". " + port.getPortName());
             List<Container> tempContainers = port.getContainers();
             for (Container container : tempContainers) {
                 System.out.println("Container ID: " + container.getC_number());
                 System.out.println("Container weight: " + container.getWeight());
                 System.out.println("Container type: " + container.getContainerTypeName());
+                System.out.println("Container serial code: " + container.getSerialCode());
                 System.out.println("   **********   ");
             }
         }
     }
-    static void updateContainer() {
+    static void updateContainer () {
         ArrayList<Port> ports = readContainer();
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter container ID you want to update information: ");
-        int checkConID = scanner.nextInt();
-        boolean containerFound = false; // Flag to track if the container ID was found
 
+        // Ask the user for the port ID
+        System.out.print("Enter the port ID where the container is located: ");
+        int portIDToUpdate = scanner.nextInt();
+
+        Port selectedPort = null;
+        boolean portFound = false;
+
+        // Find the port with the given ID
         for (Port port : ports) {
-            List<Container> tempContainers = port.getContainers();
-            for (Container container : tempContainers) {
-                if (container.getC_number() == checkConID) {
-                    System.out.print("Enter new weight: ");
-                    double tempWeight = scanner.nextDouble();
-                    System.out.println("Choose Container Type:");
-                    System.out.println("1. DRY_STORAGE");
-                    System.out.println("2. OPEN_TOP");
-                    System.out.println("3. OPEN_SIDE");
-                    System.out.println("4. REFRIGERATED");
-                    System.out.println("5. LIQUID");
-                    System.out.print("Enter new container type (1 -> 5): ");
-                    int tempType = scanner.nextInt();
-
-                    if (tempType >= 1 && tempType <= 5) {
-                        container.setType(tempType);
-                        container.setWeight(tempWeight);
-                    } else {
-                        System.out.println("You entered a wrong type!");
-                    }
-
-                    containerFound = true;
-                    break;
-                }
-            }
-            if (containerFound) {
+            if (port.getP_number() == portIDToUpdate) {
+                selectedPort = port;
+                portFound = true;
                 break;
             }
         }
-        if (!containerFound) {
-            System.out.println("Container ID not found!");
+
+        if (!portFound) {
+            System.out.println("Port with ID " + portIDToUpdate + " was not found.");
+            return;
         }
-        writeBackToFileContainer(ports);
+
+        List<Container> containersInPort = selectedPort.getContainers();
+
+        if (containersInPort.isEmpty()) {
+            System.out.println("No containers found in port " + selectedPort.getPortName());
+            return;
+        }
+
+        // Ask the user for the container ID to update
+        System.out.print("Enter the container ID you want to update: ");
+        int containerIDToUpdate = scanner.nextInt();
+
+        boolean containerFound = false;
+
+        for (Container container : containersInPort) {
+            if (container.getC_number() == containerIDToUpdate) {
+                System.out.print("Enter new weight: ");
+                double tempWeight = scanner.nextDouble();
+                System.out.println("Choose Container Type:");
+                System.out.println("1. DRY_STORAGE");
+                System.out.println("2. OPEN_TOP");
+                System.out.println("3. OPEN_SIDE");
+                System.out.println("4. REFRIGERATED");
+                System.out.println("5. LIQUID");
+                System.out.print("Enter new container type (1 -> 5): ");
+                int tempType = scanner.nextInt();
+
+                if (tempType >= 1 && tempType <= 5) {
+                    container.setType(tempType);
+                    container.setWeight(tempWeight);
+                } else {
+                    System.out.println("You entered a wrong type!");
+                }
+
+                containerFound = true;
+                break;
+            }
+        }
+
+        if (containerFound) {
+            System.out.println("Container with ID " + containerIDToUpdate + " has been updated in port " + selectedPort.getPortName());
+            writeBackToFileContainer(ports);
+        } else {
+            System.out.println("Container with ID " + containerIDToUpdate + " was not found in port " + selectedPort.getPortName());
+        }
     }
-    static void deleteContainer() {
+        static void deleteContainer() {
         ArrayList<Port> ports = readContainer();
         Scanner scanner = new Scanner(System.in);
 
@@ -218,6 +261,8 @@ public class containerCRUD {
                     bufferedWriter.write(String.valueOf(container.getWeight()));
                     bufferedWriter.write(" ");
                     bufferedWriter.write(String.valueOf(container.getType()));
+                    bufferedWriter.write(" ");
+                    bufferedWriter.write(String.valueOf(container.getSerialCode()));
                     bufferedWriter.newLine();
                 }
             }
