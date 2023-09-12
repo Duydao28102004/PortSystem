@@ -217,6 +217,9 @@ public class containerCRUD {
         Scanner scanner = new Scanner(System.in);
 
         //ask user for port ID where delete container located
+        for (Port port : ports) {
+            System.out.println(port.getP_number() + ". " + port.getPortName());
+        }
         System.out.print("Enter the port ID where you want to delete a container: ");
         int deletePortID = scanner.nextInt();
 
@@ -225,6 +228,7 @@ public class containerCRUD {
             System.out.println("Port with ID " + deletePortID + " was not found.");
             return;
         }
+        deletePortID -= 1;
         Port selectedPort = ports.get(deletePortID);
 
         // check if the port has any container or not

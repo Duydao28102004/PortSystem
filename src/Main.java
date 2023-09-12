@@ -43,7 +43,6 @@ public class Main {
                     containerCRUD.updateContainer();
                     break;
                 case 8:
-                    containerCRUD.printSelectedContainers();
                     containerCRUD.deleteContainer();
                     break;
                 case 0:
