@@ -90,7 +90,17 @@ public class Port {
     }
 
     public void addVehicle(Vehicle vehicle) {
-        if (vehicles.size() < landingCap) {
+        if (vehicle.getType() == 1) {
+            vehicles.add(vehicle);
+            return;
+        }
+        int countvehicles = 0;
+        for (Vehicle tempVehicle : vehicles) {
+            if (vehicle.getType() == 2 || vehicle.getType() == 3 || vehicle.getType() == 4) {
+                countvehicles++;
+            }
+        }
+        if (countvehicles < landingCap) {
             vehicles.add(vehicle);
         } else {
             System.out.println("Port has reached its landing capacity. Cannot add more vehicles.");

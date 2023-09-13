@@ -7,7 +7,6 @@ public class Vehicle {
     private int totalContainer;
     private int type;
     // constructor
-
     public Vehicle(int vehicle_number, String vehicleName, double currentFuel, double fuelCapacity,double carryingCapacity, int totalContainer, int type) {
         this.vehicle_number = vehicle_number;
         this.vehicleName = vehicleName;
@@ -78,9 +77,9 @@ public class Vehicle {
 
     public enum VehicleType {
         SHIP(1),
-        BASICTRUCK(2),
-        REEFERTRUCK(3),
-        TANKERTRUCK(4);
+        BASIC_TRUCK(2),
+        REEFER_TRUCK(3),
+        TANKER_TRUCK(4);
 
         private final int value;
 
