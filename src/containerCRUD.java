@@ -271,7 +271,7 @@ public class containerCRUD {
     static void writeBackToFileContainer(List<Port> ports) {
         try (FileWriter fileWriter = new FileWriter("resources/container_data.txt");
              BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            // loop the ports and print container in each port to port_data.txt file
+            // loop the ports and print container in each port to container_data.txt file
             for (Port port : ports) {
                 List<Container> containers = port.getContainers();
                 for (Container container : containers) {

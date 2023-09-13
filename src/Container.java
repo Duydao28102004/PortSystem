@@ -59,9 +59,6 @@ public class Container {
         ContainerType(int value) {
             this.value = value;
         }
-        public int getValue() {
-            return value;
-        }
         public static ContainerType fromValue(int value) {
             for (ContainerType type : ContainerType.values()) {
                 if (type.value == value) {
