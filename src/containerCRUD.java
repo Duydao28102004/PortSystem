@@ -117,7 +117,7 @@ public class containerCRUD {
         }
         return ports;
     }
-    static void printSelectedContainers() {
+    static void printContainers() {
         List<Port> ports = readContainer();
         // loop through ports and print out all containers in each port
         for (Port port : ports) {
@@ -154,13 +154,13 @@ public class containerCRUD {
         // Ask the user for the port ID
         System.out.print("Enter the port ID where the container is located: ");
         int portIDToUpdate = scanner.nextInt();
-        portIDToUpdate -= 1;
 
         if (portExist(ports, portIDToUpdate) == null) {
             System.out.println("Port with ID " + portIDToUpdate + " was not found.");
             return;
         }
-        Port selectedPort = ports.get(portIDToUpdate);
+
+        Port selectedPort = ports.get(portIDToUpdate - 1);
 
         List<Container> containersInPort = selectedPort.getContainers();
 
@@ -225,7 +225,7 @@ public class containerCRUD {
             System.out.println("Port with ID " + deletePortID + " was not found.");
             return;
         }
-        Port selectedPort = ports.get(deletePortID);
+        Port selectedPort = ports.get(deletePortID - 1);
 
         // check if the port has any container or not
         List<Container> containersInPort = selectedPort.getContainers();

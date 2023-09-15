@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class Vehicle {
     private int vehicle_number;
     private String vehicleName;
@@ -6,6 +8,7 @@ public class Vehicle {
     private double carryingCapacity;
     private int totalContainer;
     private int type;
+    private ArrayList<Container> containers;
     // constructor
     public Vehicle(int vehicle_number, String vehicleName, double currentFuel, double fuelCapacity,double carryingCapacity, int totalContainer, int type) {
         this.vehicle_number = vehicle_number;
@@ -73,6 +76,14 @@ public class Vehicle {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public ArrayList<Container> getContainers() {
+        return containers;
+    }
+
+    public void setContainers(ArrayList<Container> containers) {
+        this.containers = containers;
     }
 
     public enum VehicleType {
