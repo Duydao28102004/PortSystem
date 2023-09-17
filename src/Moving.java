@@ -61,12 +61,19 @@ public class Moving {
             return;
         }
         // Now you can use 'containersInStartingPort' for further processing
-        containerCRUD.printContainersInPort(containersInStartingPort);
+
         // Create a list to hold the selected containers
         List<Container> selectedContainers = new ArrayList<>();
-
-
-
+        int userchoice = 1;
+        while (userchoice == 1) {
+            containerCRUD.printContainersInPort(containersInStartingPort);
+            System.out.print("Enter container ID you want to load on vehicle");
+            int selectedContainerID = scanner.nextInt();
+            selectedContainers.add(containersInStartingPort.get(selectedContainerID - 1));
+            containersInStartingPort.remove(selectedContainerID-1);
+            System.out.print("Do you want to add more containers?(1 for yes, 0 for no):");
+            userchoice = scanner.nextInt();
+        }
     }
     public static void main(String[] args) {
         createTrip();

@@ -8,7 +8,6 @@ public class Vehicle {
     private double carryingCapacity;
     private int totalContainer;
     private int type;
-    private ArrayList<Container> containers;
     // constructor
     public Vehicle(int vehicle_number, String vehicleName, double currentFuel, double fuelCapacity,double carryingCapacity, int totalContainer, int type) {
         this.vehicle_number = vehicle_number;
@@ -78,13 +77,6 @@ public class Vehicle {
         this.type = type;
     }
 
-    public ArrayList<Container> getContainers() {
-        return containers;
-    }
-
-    public void setContainers(ArrayList<Container> containers) {
-        this.containers = containers;
-    }
 
     public enum VehicleType {
         SHIP(1),
