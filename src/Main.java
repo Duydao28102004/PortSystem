@@ -9,6 +9,7 @@ public class Main {
             System.out.println("1. Port");
             System.out.println("2. Container");
             System.out.println("3. Vehicle");
+            System.out.println("4. Trip");
             System.out.println("0. Exit the program");
             System.out.print("Enter tab choice: ");
             int tabChoice = scanner.nextInt();
@@ -27,6 +28,9 @@ public class Main {
                     break;
                 case 3:
                     handleVehicleTab(scanner);
+                    break;
+                case 4:
+                    Moving.createTrip();
                     break;
                 default:
                     System.out.println("Invalid tab choice. Please choose 1 for Port or 2 for Container.");

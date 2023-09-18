@@ -109,9 +109,42 @@ public class Moving {
             }
         }
         double totalFuelConsumption = totalFuelConsumptionForTrip(selectedContainers,startingPort,destinationPort,selectedVehicle);
-        System.out.println(selectedContainers.size());
-        System.out.println(totalFuelConsumption);
-        // Now you have a list of compatible containers in 'selectedContainers'
+        if (totalFuelConsumption > selectedVehicle.getFuelCapacity()) {
+            System.out.println("Vehicle fuel capacity is not enough to handle this trip, please try again.");
+            return;
+        }
+        System.out.println("Total fuel for this trip: " + totalFuelConsumption);
+        if (totalFuelConsumption > selectedVehicle.getCurrentFuel()) {
+            System.out.println("Not enough fuel in vehicle");
+            System.out.println("Current fuel: " + selectedVehicle.getCurrentFuel());
+            System.out.println("Fuel capacity: " + selectedVehicle.getFuelCapacity());
+            double maxFuelCanAdd = selectedVehicle.getFuelCapacity() - selectedVehicle.getCurrentFuel();
+            System.out.println("How much fuel you want to add?: ");
+            // Loop until the user enters a valid fuel value
+            double addingFuel;
+            while (true) {
+                addingFuel = scanner.nextDouble();
+                if (addingFuel <= maxFuelCanAdd) {
+                    break; // Exit the loop if the input is valid
+                } else {
+                    System.out.println("Warning: Adding fuel exceeds vehicle capacity.");
+                    System.out.println("Max fuel that can be added: " + maxFuelCanAdd);
+                    System.out.println("Please enter a valid fuel amount: ");
+                }
+            }
+            // Update the current fuel of the vehicle
+            selectedVehicle.setCurrentFuel(selectedVehicle.getCurrentFuel() + addingFuel);
+            selectedVehicle.setCurrentFuel(selectedVehicle.getCurrentFuel() - totalFuelConsumption);
+            int c_num = containerCRUD.autoGenerateContainerID(destinationPort.getP_number());
+            for (Container container : selectedContainers) {
+                Container sendContainer = new Container(c_num, container.getWeight(), container.getType(), container.getSerialCode());
+                destinationPort.getContainers().add(sendContainer);
+                startingPort.removeContainer(container);
+                c_num++;
+            }
+            destinationPort.addVehicle(selectedVehicle);
+            startingPort.removeVehicle(selectedVehicle);
+        }
     }
 
 
@@ -124,17 +157,24 @@ public class Moving {
             return true;
         } else if (vehicleType == 2) {
             // Basic trucks can carry dry storage, open top, and open side containers
-            return containerType >= 1 && containerType <= 3;
+            if (containerType == 1 || containerType == 2 || containerType == 3) {
+                return true;
+            }
         } else if (vehicleType == 3) {
             // Reefer trucks can carry refrigerated containers
-            return containerType == 4;
+            if (containerType == 4) {
+                return true;
+            }
         } else if (vehicleType == 4) {
             // Tanker trucks can carry liquid containers
-            return containerType == 5;
+            if (containerType == 5) {
+                return true;
+            }
         } else {
             // Unknown vehicle type, not compatible with any containers
             return false;
         }
+        return false;
     }
 
     static boolean isDestinationPortAvailable(Port destinationPort, Vehicle selectedVehicle) {
@@ -162,41 +202,52 @@ public class Moving {
     static double totalFuelConsumptionForTrip(List<Container> selectedContainers, Port startingPort, Port destinationPort, Vehicle selectedVehicle) {
         double fuelConsumptionPerKm = 0;
 
-        // Initialize fuel consumption based on vehicle type
         if (selectedVehicle.getType() == 1) {
-            // For ships (type 1), set an initial value
-            fuelConsumptionPerKm = 1.0; // You can adjust this value as needed
+            for (Container container : selectedContainers) {
+                switch (container.getType()) {
+                    case 1:
+                        fuelConsumptionPerKm = fuelConsumptionPerKm + 3.5;
+                        break;
+                    case 2:
+                        fuelConsumptionPerKm = fuelConsumptionPerKm + 2.8;
+                        break;
+                    case 3:
+                        fuelConsumptionPerKm = fuelConsumptionPerKm + 2.7;
+                        break;
+                    case 4:
+                        fuelConsumptionPerKm = fuelConsumptionPerKm + 4.5;
+                        break;
+                    case 5:
+                        fuelConsumptionPerKm = fuelConsumptionPerKm + 4.8;
+                        break;
+                }
+            }
         } else {
-            // For other vehicle types (types 2 to 4), set a different initial value
-            fuelConsumptionPerKm = 2.0; // You can adjust this value as needed
-        }
-
-        for (Container container : selectedContainers) {
-            System.out.println(container.getContainerTypeName());
-            switch (container.getType()) {
-                case 1:
-                    fuelConsumptionPerKm += 3.5;
-                    break;
-                case 2:
-                    fuelConsumptionPerKm += 2.8;
-                    break;
-                case 3:
-                    fuelConsumptionPerKm += 2.7;
-                    break;
-                case 4:
-                    fuelConsumptionPerKm += 4.5;
-                    break;
-                case 5:
-                    fuelConsumptionPerKm += 4.8;
-                    break;
+            for (Container container : selectedContainers) {
+                switch (container.getType()) {
+                    case 1:
+                        fuelConsumptionPerKm = fuelConsumptionPerKm + 4.6;
+                        break;
+                    case 2, 3:
+                        fuelConsumptionPerKm = fuelConsumptionPerKm + 3.2;
+                        break;
+                    case 4:
+                        fuelConsumptionPerKm = fuelConsumptionPerKm + 5.4;
+                        break;
+                    case 5:
+                        fuelConsumptionPerKm = fuelConsumptionPerKm + 5.3;
+                        break;
+                }
             }
         }
 
-        double distanceBetweenPort = Math.sqrt(Math.pow((destinationPort.getLatitude() - startingPort.getLatitude()), 2) + Math.pow((destinationPort.getLongitude() - startingPort.getLongitude()), 2));
+        double startingPortX = startingPort.getLatitude();
+        double startingPortY = startingPort.getLongitude();
+        double destinationPortX = destinationPort.getLatitude();
+        double destinationPortY = destinationPort.getLongitude();
+        double distanceBetweenPort = Math.sqrt(Math.pow((destinationPortX - startingPortX),2) + Math.pow((destinationPortY - startingPortY),2));
+
         return distanceBetweenPort * fuelConsumptionPerKm;
     }
 
-    public static void main(String[] args) {
-        createTrip();
-    }
 }
