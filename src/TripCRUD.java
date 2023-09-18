@@ -32,12 +32,14 @@ public class TripCRUD {
             return;
         }
 
+        // List vehicles in starting port
         List<Vehicle> vehiclesInStartingPort = startingPort.getVehicles();
         if (vehiclesInStartingPort.isEmpty()) {
             System.out.println("No vehicles found in port " + startingPort.getPortName());
             return;
         }
 
+        // print vehicles in starting port out
         for (Vehicle vehicle : vehiclesInStartingPort) {
             System.out.println("Vehicle ID: " + vehicle.getVehicle_number());
             System.out.println("Vehicle Name: " + vehicle.getVehicleName());
@@ -47,6 +49,7 @@ public class TripCRUD {
             System.out.println("----------------------------------");
         }
 
+        // ask users to select the vehicle
         System.out.print("Enter vehicle ID you want to use: ");
         int selectedVehicleID = scanner.nextInt();
 
@@ -71,6 +74,7 @@ public class TripCRUD {
             }
         }
 
+        // return message if the system can not find suitable container for vehicle
         if (compatibleContainersInStartingPort.isEmpty()) {
             System.out.println("There are no suitable containers for the selected vehicle.");
             return;
@@ -81,6 +85,7 @@ public class TripCRUD {
         double totalWeight = 0;
         double remainingWeight = selectedVehicle.getCarryingCapacity();
         int userChoice = 0;
+        // a loop for user to load multiple containers on the vehicles
         while (userChoice == 0) {
             System.out.println("Containers in port available to load in: ");
             containerCRUD.printContainersInPort(compatibleContainersInStartingPort);
@@ -110,80 +115,193 @@ public class TripCRUD {
             if (selectedContainer != null) {
                 // The selected container is valid
                 if (selectedContainer.getWeight() < remainingWeight) {
+                    // add selected container to selected containers list
                     selectedContainers.add(selectedContainer);
                     compatibleContainersInStartingPort.remove(selectedContainer);
+                    // calculate remaining weight
                     totalWeight = totalWeight + selectedContainer.getWeight();
                     remainingWeight = remainingWeight - selectedContainer.getWeight();
                     System.out.println("Current weight: " + totalWeight);
                     System.out.println("Remaining weight: " + remainingWeight);
                 } else {
+                    // notify user if the container is overweight
                     System.out.println("The selected container is overweight");
                 }
             } else {
                 System.out.println("Invalid container ID. Please enter a valid ID.");
             }
 
-            System.out.print("Do you want to add more containers? (0 for yes and 1 for no): ");
-            userChoice = scanner.nextInt();
+            // ask user if they want to continue add more container
+            while (true) {
+                System.out.print("Do you want to add more containers? (0 for yes and 1 for no): ");
+                userChoice = scanner.nextInt();
+                if (userChoice == 1 || userChoice == 0) {
+                    break;
+                }
+                System.out.println("Invalid command, please try again");
+            }
         }
 
+        // calculate total fuel consumption for the trip and print it out
         double totalFuelConsumption = totalFuelConsumptionForTrip(selectedContainers,startingPort,destinationPort,selectedVehicle);
         System.out.println("Fuel consumption for this trip: " + totalFuelConsumption);
         int tripID = autoGenerateTripID();
-        System.out.print("Enter departure date (yyyy-MM-dd): ");
-        String departureDate = scanner.next();
+        // loop to ask user for departure date and check the format
+        String departureDate;
+        while (true) {
+            System.out.print("Enter departure date (yyyy-MM-dd): ");
+            String userInput = scanner.next();
+            if (userInput.length() == 10) {
+                departureDate = userInput;
+                break;
+            }
+            System.out.println("Invalid date format, please try again");
+        }
 
-        System.out.print("Enter arrival date (yyyy-MM-dd): ");
-        String arrivalDate= scanner.next();
-
+        // loop to ask user for arrival date and check the format
+        String arrivalDate;
+        while (true) {
+            System.out.print("Enter arrival date (yyyy-MM-dd): ");
+            String userInput = scanner.next();
+            if (userInput.length() == 10) {
+                arrivalDate = userInput;
+                break;
+            }
+            System.out.println("Invalid date format, please try again");
+        }
+        // create trip and write back to file
+        List<Trip> trips = readTrips();
         Trip trip = new Trip(tripID, selectedVehicle, startingPort, destinationPort, selectedContainers, departureDate, arrivalDate, totalFuelConsumption, 1);
-        writeTripToFile(trip);
+        trips.add(trip);
+        writeTripToFile(trips);
     }
 
+    // this method scan the file for current trip ID and calculate the next trip ID
     static int autoGenerateTripID() {
+        // default trip ID
         int tripID = 1;
+        // read the file and loop to file the largest trip ID
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader("resources/trip_data.txt"))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
                 String[] parts = line.split(" ");
                 if (parts.length >= 2) {
                     int id = Integer.parseInt(parts[0]);
+                    // if exist add 1 more to default
                     if (id >= tripID) {
                         tripID = id + 1;
                     }
                 }
             }
         } catch (IOException e) {
+            // fail to read notification
             System.err.println("An error occurred while reading the file: " + e.getMessage());
         }
+        // return the calculated trip id
         return tripID;
     }
-//    static void approvedTrip() {
-//        if (selectedVehicle.getCurrentFuel() < totalFuelConsumption) {
-//            System.out.println("Not enough fuel");
-//            System.out.println("Current fuel: " + selectedVehicle.getCurrentFuel());
-//            System.out.println("Fuel capacity: " + selectedVehicle.getFuelCapacity());
-//            while (true) {
-//                System.out.print("Enter fuel you want to add: ");
-//                double addingFuel = scanner.nextDouble();
-//                if (addingFuel <= (selectedVehicle.getFuelCapacity() - selectedVehicle.getCurrentFuel())) {
-//                    System.out.println("Fuel has been added");
-//                    break;
-//                }
-//                System.out.println("adding fuel is larger than remaining fuel slot. Please try again.");
-//            }
-//        }
-//        selectedVehicle.setCurrentFuel(selectedVehicle.getCurrentFuel() - totalFuelConsumption);
-//        destinationPort.addVehicle(selectedVehicle);
-//        startingPort.removeVehicle(selectedVehicle);
-//        for (Container container : selectedContainers) {
-//            destinationPort.addContainer(container);
-//            startingPort.removeContainer(container);
-//        }
-//        containerCRUD.writeBackToFileContainer(ports);
-//        VehicleCRUD.writeVehiclesBackToFile(ports);
-//
-//    }
+
+    // this method is used to approve the trip in pending to approve status
+    static void approvedTrip() {
+        Scanner scanner = new Scanner(System.in);
+        // read trips, ports, containers, vehicles out to a list
+        List<Trip> trips = readTrips();
+        List<Port> ports = VehicleCRUD.readVehicle();
+        // print trips
+        printSpecifyTrip(trips);
+        System.out.print("Enter trip ID you want to approve to move: ");
+        int tripID = scanner.nextInt();
+        Trip approvingTrip = null;
+        for (Trip trip : trips) {
+            if (trip.getTrip_number() == tripID) {
+                approvingTrip = trip;
+            }
+        }
+        // if trip was approved it will notify users.
+        if (approvingTrip.getTripStatus() == 2) {
+            System.out.println("This trip has been approved");
+            return;
+        }
+
+        // get total consumption, selected containers, starting port , destination port and selected vehicle to variable
+        double totalFuelConsumption = approvingTrip.getFuelConsumption();
+        List<Container> selectedContainers = approvingTrip.getLoadContainers();
+        Port startingPort = ports.get(approvingTrip.getDeparturePort().getP_number() - 1);
+        Port destinationPort = ports.get(approvingTrip.getDestinationPort().getP_number() - 1);
+        List<Container> containersToRemove = new ArrayList<>();
+        // check if vehicle moved or not
+        Vehicle selectedVehicle = null;
+        for (Port port : ports) {
+            for (Vehicle vehicle : port.getVehicles()) {
+                if (vehicle.getVehicle_number() == approvingTrip.getVehicle().getVehicle_number()) {
+                    selectedVehicle = vehicle;
+                }
+            }
+        }
+        boolean vehicleFound = false;
+        for (Vehicle vehicle : startingPort.getVehicles()) {
+            if (vehicle.getVehicle_number() == selectedVehicle.getVehicle_number()) {
+                startingPort.getVehicles().remove(vehicle);
+                vehicleFound = true;
+                break; // Exit the loop once the vehicle is found and removed
+            }
+        }
+
+        if (!vehicleFound) {
+            System.out.println("Error: The selected vehicle is not in the starting port.");
+            return; // You may want to return or handle the situation accordingly
+        }
+
+        // check the fuel that enough for trip or not and user can refuel it
+        if (selectedVehicle.getCurrentFuel() < totalFuelConsumption) {
+            System.out.println("Not enough fuel");
+            System.out.println("Current fuel: " + selectedVehicle.getCurrentFuel());
+            System.out.println("Fuel capacity: " + selectedVehicle.getFuelCapacity());
+            while (true) {
+                System.out.print("Refuel: ");
+                double addingFuel = scanner.nextDouble();
+                if (addingFuel <= (selectedVehicle.getFuelCapacity() - selectedVehicle.getCurrentFuel())) {
+                    selectedVehicle.setCurrentFuel(selectedVehicle.getCurrentFuel() + addingFuel);
+                    break;
+                }
+                System.out.println("Invalid fuel amount. Try again");
+            }
+        }
+
+        selectedVehicle.setCurrentFuel(selectedVehicle.getCurrentFuel() - totalFuelConsumption);
+
+
+        // Check if all selected containers can be loaded at the starting port
+        boolean allContainersLoaded = true;
+        for (Container selectedContainer : selectedContainers) {
+            if (!startingPort.getContainers().contains(selectedContainer)) {
+                allContainersLoaded = false;
+                System.out.println("Container " + selectedContainer.getSerialCode() + " cannot be loaded at the starting port.");
+            }
+        }
+
+        if (!allContainersLoaded) {
+            return; // You may want to return or handle the situation accordingly
+        }
+        for (Container container : startingPort.getContainers()) {
+            for (Container selectedContainer : selectedContainers) {
+                if (container.getSerialCode() == selectedContainer.getSerialCode()) {
+                    containersToRemove.add(container);
+                }
+            }
+        }
+
+        // move containers and vehicle to destination port and remove itself from starting port and write back to file
+        startingPort.getVehicles().remove(selectedVehicle);
+        destinationPort.getVehicles().add(selectedVehicle);
+        startingPort.getContainers().removeAll(containersToRemove);
+        destinationPort.getContainers().addAll(containersToRemove);
+        approvingTrip.setTripStatus(2);
+        containerCRUD.writeBackToFileContainer(ports);
+        VehicleCRUD.writeVehiclesBackToFile(ports);
+        writeTripToFile(trips);
+    }
+
     static boolean isContainerCompatibleWithVehicle(Container container, Vehicle vehicle) {
         int containerType = container.getType();
         int vehicleType = vehicle.getType();
@@ -192,7 +310,7 @@ public class TripCRUD {
             // Ships can carry all container types
             return true;
         } else if (vehicleType == 2) {
-            // Basic trucks can carry dry storage, open top, and open side containers
+            // Basic trucks can carry dry-storage, open-top, and open side-containers
             return containerType >= 1 && containerType <= 3;
         } else if (vehicleType == 3) {
             // Reefer trucks can carry refrigerated containers
@@ -274,7 +392,7 @@ public class TripCRUD {
             FileReader fileReader = new FileReader("resources/trip_data.txt");
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line;
-            if ((line = bufferedReader.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
                 String[] parts = line.split(" ");
                 int Trip_number = Integer.parseInt(parts[0]);
                 int Vehicle_number = Integer.parseInt(parts[1]);
@@ -324,8 +442,10 @@ public class TripCRUD {
         return trips;
     }
     static void printAllTrip() {
-        List<Port> ports = VehicleCRUD.readVehicle();
         List<Trip> trips = readTrips();
+        printSpecifyTrip(trips);
+    }
+    static void printSpecifyTrip(List<Trip> trips) {
         for (Trip trip : trips) {
             System.out.println("Trip number: " + trip.getTrip_number());
             System.out.println("Vehicle: " + trip.getVehicle().getVehicleName());
@@ -340,35 +460,69 @@ public class TripCRUD {
             System.out.println();
         }
     }
+    static void deleteTrip() {
+        Scanner scanner = new Scanner(System.in);
+        List<Trip> trips = readTrips();
 
-    static void writeTripToFile(Trip trip) {
+        // Print the list of trips with their IDs for the user to see
+        printAllTrip();
+
+        System.out.print("Enter the trip ID you want to delete: ");
+        int tripIDToDelete = scanner.nextInt();
+
+        // Check if the tripIDToDelete is within valid range
+        if (tripIDToDelete < 1 || tripIDToDelete > trips.size()) {
+            System.out.println("Invalid trip ID. No trip deleted.");
+            return;
+        }
+
+        // Confirm with the user before deleting
+        System.out.print("Are you sure you want to delete this trip? (1 for yes and 0 for no): ");
+        int confirmation = scanner.nextInt();
+
+        if (confirmation == 1) {
+            // Remove the trip from the list based on user input
+            trips.remove(tripIDToDelete - 1);
+            // Update the trip data file
+            writeTripToFile(trips);
+            System.out.println("Trip with ID " + tripIDToDelete + " has been deleted.");
+        } else {
+            System.out.println("Trip deletion canceled.");
+        }
+    }
+
+
+    static void writeTripToFile(List<Trip> trips) {
         try {
             FileWriter fileWriter = new FileWriter("resources/trip_data.txt");
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
-            bufferedWriter.write(String.valueOf(trip.getTrip_number()));
-            bufferedWriter.write(" ");
-            bufferedWriter.write(String.valueOf(trip.getVehicle().getVehicle_number()));
-            bufferedWriter.write(" ");
-            bufferedWriter.write(String.valueOf(trip.getDeparturePort().getP_number()));
-            bufferedWriter.write(" ");
-            bufferedWriter.write(String.valueOf(trip.getDestinationPort().getP_number()));
-            bufferedWriter.write(" ");
-            for (Container container : trip.getLoadContainers()) {
-                bufferedWriter.write(container.toString());
-                bufferedWriter.write(",");
+            for (Trip trip : trips) {
+                bufferedWriter.write(String.valueOf(trip.getTrip_number()));
+                bufferedWriter.write(" ");
+                bufferedWriter.write(String.valueOf(trip.getVehicle().getVehicle_number()));
+                bufferedWriter.write(" ");
+                bufferedWriter.write(String.valueOf(trip.getDeparturePort().getP_number()));
+                bufferedWriter.write(" ");
+                bufferedWriter.write(String.valueOf(trip.getDestinationPort().getP_number()));
+                bufferedWriter.write(" ");
+                for (Container container : trip.getLoadContainers()) {
+                    bufferedWriter.write(container.toString());
+                    bufferedWriter.write(",");
+                }
+                bufferedWriter.write(" ");
+                bufferedWriter.write(trip.getDepartureDate());
+                bufferedWriter.write(" ");
+                bufferedWriter.write(trip.getArrivalDate());
+                bufferedWriter.write(" ");
+                bufferedWriter.write(String.valueOf(trip.getFuelConsumption()));
+                bufferedWriter.write(" ");
+                bufferedWriter.write(String.valueOf(trip.getTripStatus()));
+                bufferedWriter.newLine();
             }
-            bufferedWriter.write(" ");
-            bufferedWriter.write(trip.getDepartureDate());
-            bufferedWriter.write(" ");
-            bufferedWriter.write(trip.getArrivalDate());
-            bufferedWriter.write(" ");
-            bufferedWriter.write(String.valueOf(trip.getFuelConsumption()));
-            bufferedWriter.write(" ");
-            bufferedWriter.write(String.valueOf(trip.getTripStatus()));
             bufferedWriter.close();
-        } catch (IOException e) {}
-    }
-    public static void main(String[] args) {
-        printAllTrip();
+            System.out.println("Data have been saved");
+        } catch (IOException e) {
+            System.err.println("An error occurred while writing the file: " + e.getMessage());
+        }
     }
 }

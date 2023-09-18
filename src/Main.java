@@ -30,14 +30,13 @@ public class Main {
                     handleVehicleTab(scanner);
                     break;
                 case 4:
-                    Moving.createTrip();
+                    handleTripTab(scanner);
                     break;
                 default:
                     System.out.println("Invalid tab choice. Please choose 1 for Port or 2 for Container.");
                     break;
             }
         }
-
         scanner.close();
     }
 
@@ -138,6 +137,42 @@ public class Main {
                     break;
                 case 4:
                     VehicleCRUD.deleteVehicle();
+                    break;
+                case 0:
+                    System.out.println("Returning to main menu.");
+                    break;
+                default:
+                    System.out.println("You entered a wrong command code!");
+                    break;
+            }
+        }
+    }
+
+    private static void handleTripTab(Scanner scanner) {
+        int userChoice = 1;
+
+        while (userChoice != 0) {
+            System.out.println("Trip commands:");
+            System.out.println("1. Create Trip");
+            System.out.println("2. Print all trip");
+            System.out.println("3. Delete trip");
+            System.out.println("4. Approve trip");
+            System.out.println("0. Back to main menu");
+            System.out.print("Choose your command: ");
+            userChoice = scanner.nextInt();
+
+            switch (userChoice) {
+                case 1:
+                    TripCRUD.createTrip();
+                    break;
+                case 2:
+                    TripCRUD.printAllTrip();
+                    break;
+                case 3:
+                    TripCRUD.deleteTrip();
+                    break;
+                case 4:
+                    TripCRUD.approvedTrip();
                     break;
                 case 0:
                     System.out.println("Returning to main menu.");

@@ -266,6 +266,8 @@ public class VehicleCRUD {
             }
             bufferedWriter.close();
             System.out.println("Data have been saved");
-        } catch (IOException e) {}
+        } catch (IOException e) {
+            System.err.println("An error occurred while writing the file: " + e.getMessage());
+        }
     }
 }
