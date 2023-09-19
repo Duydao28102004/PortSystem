@@ -8,18 +8,24 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TripCRUD {
-    static void createTrip() {
+    static void createTrip(int PortID) {
         List<Port> ports = VehicleCRUD.readVehicle();
         Scanner scanner = new Scanner(System.in);
         portCRUD.printPorts();
-        System.out.print("Enter starting port ID: ");
-        int startingPortID = scanner.nextInt();
+        Port startingPort;
+        if (PortID == 0) {
+            System.out.print("Enter starting port ID: ");
+            int startingPortID = scanner.nextInt();
 
-        // Check if the starting port exists
-        Port startingPort = containerCRUD.portExist(ports, startingPortID);
-        if (startingPort == null) {
-            System.out.println("Port with ID " + startingPortID + " was not found.");
-            return;
+            // Check if the starting port exists
+            startingPort = containerCRUD.portExist(ports, startingPortID);
+            if (startingPort == null) {
+                System.out.println("Port with ID " + startingPortID + " was not found.");
+                return;
+            }
+        } else {
+            int startingPortID = PortID;
+            startingPort = containerCRUD.portExist(ports, startingPortID);
         }
 
         System.out.print("Enter destination port ID: ");
@@ -53,13 +59,13 @@ public class TripCRUD {
         System.out.print("Enter vehicle ID you want to use: ");
         int selectedVehicleID = scanner.nextInt();
 
-        // Check if the selected vehicle exists
-        if (selectedVehicleID < 1 || selectedVehicleID > vehiclesInStartingPort.size()) {
-            System.out.println("Invalid vehicle ID.");
-            return;
+
+        Vehicle selectedVehicle = null;
+        for (Vehicle vehicle : vehiclesInStartingPort) {
+            if (vehicle.getVehicle_number() == selectedVehicleID) ;
+            selectedVehicle = vehicle;
         }
 
-        Vehicle selectedVehicle = vehiclesInStartingPort.get(selectedVehicleID - 1);
         // Check if destination port available
         if (!isDestinationPortAvailable(destinationPort, selectedVehicle)) {
             System.out.println("The destination port do not have enough space");
@@ -91,6 +97,7 @@ public class TripCRUD {
             containerCRUD.printContainersInPort(compatibleContainersInStartingPort);
             if (compatibleContainersInStartingPort.size() == 0) {
                 System.out.println("There is no container remain");
+                break;
             }
             int selectedContainerID;
             while (true) {
@@ -143,7 +150,7 @@ public class TripCRUD {
         }
 
         // calculate total fuel consumption for the trip and print it out
-        double totalFuelConsumption = totalFuelConsumptionForTrip(selectedContainers,startingPort,destinationPort,selectedVehicle);
+        double totalFuelConsumption = totalFuelConsumptionForTrip(selectedContainers, startingPort, destinationPort, selectedVehicle);
         System.out.println("Fuel consumption for this trip: " + totalFuelConsumption);
         int tripID = autoGenerateTripID();
         // loop to ask user for departure date and check the format
@@ -271,18 +278,6 @@ public class TripCRUD {
         selectedVehicle.setCurrentFuel(selectedVehicle.getCurrentFuel() - totalFuelConsumption);
 
 
-        // Check if all selected containers can be loaded at the starting port
-        boolean allContainersLoaded = true;
-        for (Container selectedContainer : selectedContainers) {
-            if (!startingPort.getContainers().contains(selectedContainer)) {
-                allContainersLoaded = false;
-                System.out.println("Container " + selectedContainer.getSerialCode() + " cannot be loaded at the starting port.");
-            }
-        }
-
-        if (!allContainersLoaded) {
-            return; // You may want to return or handle the situation accordingly
-        }
         for (Container container : startingPort.getContainers()) {
             for (Container selectedContainer : selectedContainers) {
                 if (container.getSerialCode() == selectedContainer.getSerialCode()) {
@@ -369,7 +364,7 @@ public class TripCRUD {
                 switch (container.getType()) {
                     case 1:
                         fuelConsumptionPerKm = fuelConsumptionPerKm + 4.6;
-                    case 2,3:
+                    case 2, 3:
                         fuelConsumptionPerKm = fuelConsumptionPerKm + 3.2;
                     case 4:
                         fuelConsumptionPerKm = fuelConsumptionPerKm + 5.4;
@@ -382,9 +377,10 @@ public class TripCRUD {
         double startY = startingPort.getLongitude();
         double desX = destinationPort.getLatitude();
         double desY = destinationPort.getLongitude();
-        double distanceBetweenPort = Math.sqrt(Math.pow(desX - startX,2) + Math.pow(desY - startY,2));
+        double distanceBetweenPort = Math.sqrt(Math.pow(desX - startX, 2) + Math.pow(desY - startY, 2));
         return distanceBetweenPort * fuelConsumptionPerKm;
     }
+
     static List<Trip> readTrips() {
         ArrayList<Trip> trips = new ArrayList<>();
         List<Port> ports = VehicleCRUD.readVehicle();
@@ -423,7 +419,7 @@ public class TripCRUD {
                 String[] containerSerialCodeInString = containersSerialCodeInString.split(",");
                 for (String containerSerial : containerSerialCodeInString) {
                     int containerSerialNumber = Integer.parseInt(containerSerial);
-                    for (Port port: ports) {
+                    for (Port port : ports) {
                         for (Container container : port.getContainers()) {
                             if (container.getSerialCode() == containerSerialNumber) {
                                 selectedContainer.add(container);
@@ -438,13 +434,31 @@ public class TripCRUD {
                 Trip trip = new Trip(Trip_number, selectedVehicle, departurePort, arrivalPort, selectedContainer, departureDate, arrivalDate, fuelConsumption, tripStatus);
                 trips.add(trip);
             }
-        } catch (IOException e) {}
+        } catch (IOException e) {
+        }
         return trips;
     }
+
     static void printAllTrip() {
         List<Trip> trips = readTrips();
         printSpecifyTrip(trips);
     }
+    static void printTripsFromStartingPort(int PortID) {
+        System.out.println("Trip start from port ID " + PortID + ": ");
+        List<Trip> trips = readTrips();
+        ArrayList<Trip> selectedTrips = new ArrayList<>();
+        for (Trip trip : trips) {
+            if (trip.getDeparturePort().getP_number() == PortID) {
+                selectedTrips.add(trip);
+            }
+        }
+        if (selectedTrips.size() == 0) {
+            System.out.println("There is no trip at this port");
+            return;
+        }
+        printSpecifyTrip(selectedTrips);
+    }
+
     static void printSpecifyTrip(List<Trip> trips) {
         for (Trip trip : trips) {
             System.out.println("Trip number: " + trip.getTrip_number());
@@ -460,6 +474,7 @@ public class TripCRUD {
             System.out.println();
         }
     }
+
     static void deleteTrip() {
         Scanner scanner = new Scanner(System.in);
         List<Trip> trips = readTrips();
@@ -523,6 +538,63 @@ public class TripCRUD {
             System.out.println("Data have been saved");
         } catch (IOException e) {
             System.err.println("An error occurred while writing the file: " + e.getMessage());
+        }
+    }
+
+    static double calculateTotalFuelConsumptionOnDepartureDay(String departureDate) {
+        List<Trip> trips = readTrips();
+        double totalFuelConsumption = 0;
+        for (Trip trip : trips) {
+            if (trip.getDepartureDate().equals(departureDate)) {
+                totalFuelConsumption += trip.getFuelConsumption();
+            }
+        }
+        return totalFuelConsumption;
+    }
+
+    static void listTripsInDateRange(String startDateStr, String endDateStr) {
+        List<Trip> trips = readTrips();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        try {
+            Date startDate = dateFormat.parse(startDateStr);
+            Date endDate = dateFormat.parse(endDateStr);
+
+            System.out.println("Trips within the date range " + startDateStr + " to " + endDateStr + ":");
+
+            for (Trip trip : trips) {
+                Date tripDate = dateFormat.parse(trip.getDepartureDate());
+                if (!tripDate.before(startDate) && !tripDate.after(endDate)) {
+                    System.out.println("Trip Number: " + trip.getTrip_number());
+                    System.out.println("Departure Date: " + trip.getDepartureDate());
+                    System.out.println("Arrival Date: " + trip.getArrivalDate());
+                    System.out.println("Fuel Consumption: " + trip.getFuelConsumption());
+                    System.out.println("Status: " + trip.getTripStatusName());
+                    System.out.println();
+                }
+            }
+        } catch (ParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd.");
+        }
+    }
+    static void listTripsOnGivenDay(String givenDate) {
+        List<Trip> trips = readTrips();
+
+        System.out.println("Trips on " + givenDate + ":");
+
+        for (Trip trip : trips) {
+            if (trip.getDepartureDate().equals(givenDate)) {
+                System.out.println("Trip Number: " + trip.getTrip_number());
+                System.out.println("Vehicle: " + trip.getVehicle().getVehicleName());
+                System.out.println("Departure Port: " + trip.getDeparturePort().getPortName());
+                System.out.println("Destination Port: " + trip.getDestinationPort().getPortName());
+                System.out.println("Containers:");
+                containerCRUD.printContainersInPort(trip.getLoadContainers());
+                System.out.println("Departure Date: " + trip.getDepartureDate());
+                System.out.println("Arrival Date: " + trip.getArrivalDate());
+                System.out.println("Fuel Consumption: " + trip.getFuelConsumption());
+                System.out.println("Status: " + trip.getTripStatusName());
+                System.out.println();
+            }
         }
     }
 }

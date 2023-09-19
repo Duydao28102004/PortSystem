@@ -102,7 +102,20 @@ public class portCRUD {
             return;
         }
         int portID = tempPortID - 1;
+        enterUpdatePortInfo(ports, portID);
+        scanner.close();
+        // save the port back to file again
+        writeBackToFile(ports, false);
+    }
+    static void updateSpecificPort(int PortID) {
+        int portID = PortID - 1;
+        List<Port> ports = readPorts();
+        enterUpdatePortInfo(ports, portID);
+        writeBackToFile(ports, false);
+    }
+    static void enterUpdatePortInfo(List<Port> ports, int portID) {
         // ask user for information they want to update
+        Scanner scanner = new Scanner(System.in);
         System.out.print("Enter new port name (Enter skip to skip): ");
         String temp1 = scanner.next();
         if (!temp1.equals("skip")) {
@@ -128,9 +141,6 @@ public class portCRUD {
         if (!temp5.equals("skip")) {
             ports.get(portID).setLandingCap(Integer.parseInt(temp5));
         }
-        scanner.close();
-        // save the port back to file again
-        writeBackToFile(ports, false);
     }
     static void deletePort() {
         List<Port> ports = containerCRUD.readContainer();
