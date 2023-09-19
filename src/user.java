@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class user {
+public class User {
     static void portManager(int userPortID) {
             Scanner scanner = new Scanner(System.in);
 
@@ -101,16 +101,16 @@ public class user {
 
             switch (userChoice) {
                 case 1:
-                    portCRUD.createPort();
+                    PortCRUD.createPort();
                     break;
                 case 2:
-                    portCRUD.printPorts();
+                    PortCRUD.printPorts();
                     break;
                 case 3:
-                    portCRUD.updatePorts();
+                    PortCRUD.updatePorts();
                     break;
                 case 4:
-                    portCRUD.deletePort();
+                    PortCRUD.deletePort();
                     break;
                 case 0:
                     System.out.println("Returning to main menu.");
@@ -133,7 +133,7 @@ public class user {
 
             switch (userChoice) {
                 case 1:
-                    portCRUD.updateSpecificPort(userPortID);
+                    PortCRUD.updateSpecificPort(userPortID);
                     break;
                 case 0:
                     System.out.println("Returning to main menu.");
@@ -160,16 +160,16 @@ public class user {
 
             switch (userChoice) {
                 case 1:
-                    containerCRUD.createContainer();
+                    ContainerCRUD.createContainer();
                     break;
                 case 2:
-                    containerCRUD.printContainers();
+                    ContainerCRUD.printContainers();
                     break;
                 case 3:
-                    containerCRUD.updateContainer();
+                    ContainerCRUD.updateContainer();
                     break;
                 case 4:
-                    containerCRUD.deleteContainer();
+                    ContainerCRUD.deleteContainer();
                     break;
                 case 0:
                     System.out.println("Returning to main menu.");
@@ -195,16 +195,16 @@ public class user {
 
             switch (userChoice) {
                 case 1:
-                    containerCRUD.createContainerInPort(userPortID);
+                    ContainerCRUD.createContainerInPort(userPortID);
                     break;
                 case 2:
-                    containerCRUD.printContainersWithPortID(userPortID);
+                    ContainerCRUD.printContainersWithPortID(userPortID);
                     break;
                 case 3:
-                    containerCRUD.updateContainersInSpecificPort(userPortID);
+                    ContainerCRUD.updateContainersInSpecificPort(userPortID);
                     break;
                 case 4:
-                    containerCRUD.deleteContainerInSpecificPort(userPortID);
+                    ContainerCRUD.deleteContainerInSpecificPort(userPortID);
                     break;
                 case 0:
                     System.out.println("Returning to main menu.");
@@ -373,19 +373,19 @@ public class user {
 
             switch (userChoice) {
                 case 1:
-                    statisticsOperations.getFuelInDay();
+                    StatisticsOperations.getFuelInDay();
                     break;
                 case 2:
-                    statisticsOperations.calculateWeightTypeOfAllContainers();
+                    StatisticsOperations.calculateWeightTypeOfAllContainers();
                     break;
                 case 3:
-                    statisticsOperations.listShipInPort();
+                    StatisticsOperations.listShipInPort();
                     break;
                 case 4:
-                    statisticsOperations.listTripInDay();
+                    StatisticsOperations.listTripInDay();
                     break;
                 case 5:
-                    statisticsOperations.listTripFromDays();
+                    StatisticsOperations.listTripFromDays();
                     break;
                 case 0:
                     System.out.println("Returning to main menu.");

@@ -1,10 +1,7 @@
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 
-public class statisticsOperations {
+public class StatisticsOperations {
     static void getFuelInDay() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -44,7 +41,7 @@ public class statisticsOperations {
         }
     }
     static void calculateWeightTypeOfAllContainers() {
-        List<Port> ports = containerCRUD.readContainer();
+        List<Port> ports = ContainerCRUD.readContainer();
         double weight1 = 0;
         double weight2 = 0;
         double weight3 = 0;
@@ -81,7 +78,7 @@ public class statisticsOperations {
     static void listShipInPort() {
         Scanner scanner = new Scanner(System.in);
         List<Port> ports = VehicleCRUD.readVehicle();
-        portCRUD.printPorts();
+        PortCRUD.printPorts();
         System.out.print("Select port ID to print ship out: ");
         int portID = scanner.nextInt();
         Port selectedPort = ports.get(portID - 1);

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class login {
+public class Main {
     public static void main(String[] args) {
 
         HashMap<String, String> passwords = new HashMap<>();
@@ -22,10 +22,10 @@ public class login {
                 if (storedPassword.equals(inputPassword)) {
                     System.out.println("Welcome user " + inputUserName);
                     if (userTypes.get(inputUserName) == 0) {
-                        user.admin();
+                        User.admin();
                     } else {
                         System.out.println("Port " + userTypes.get(inputUserName) + " commands:");
-                        user.portManager(userTypes.get(inputUserName));
+                        User.portManager(userTypes.get(inputUserName));
                     }
                     break;
                 } else {

@@ -3,7 +3,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
-public class containerCRUD {
+public class ContainerCRUD {
     static void createContainer() {
         List<Port> ports = readContainer();
         Scanner scanner = new Scanner(System.in);
@@ -64,7 +64,7 @@ public class containerCRUD {
         return serialCode;
     }
     static List<Port> readContainer() {
-        List<Port> ports = portCRUD.readPorts();
+        List<Port> ports = PortCRUD.readPorts();
         // create a reader to port_data.txt
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader("resources/container_data.txt"))) {
             // read each line and put it in line
