@@ -1,100 +1,107 @@
-//import java.io.*;
-//import java.time.LocalDateTime;
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Scanner;
-//
-//public abstract class Vehicle {
-//    protected String id;
-//    protected String name;
-//    protected double currentFuel;
-//    protected double carryingCapacity;
-//    protected double fuelCapacity;
-//    protected Port currentPort;
-//    protected int totalContainers;
-//    protected List<Container> containers;
-//
-//    public Vehicle(String id, String name, double currentFuel, double carryingCapacity, double fuelCapacity) {
-//        this.id = id;
-//        this.name = name;
-//        this.currentFuel = currentFuel;
-//        this.carryingCapacity = carryingCapacity;
-//        this.fuelCapacity = fuelCapacity;
-//        this.currentPort = null;
-//        this.totalContainers = 0;
-//        this.containers = new ArrayList<>();
-//    }
-//
-//    // Abstract method to check if the vehicle can move to a port.
-//    public abstract boolean canMoveToPort(Port destinationPort);
-//
-//    // Abstract method to move the vehicle to a port.
-//    public abstract void moveToPort(Port destinationPort);
-//
-//    // Abstract method to refuel the vehicle.
-//    public abstract void refuel();
-//
-//    // Abstract method to load a container onto the vehicle.
-//    public abstract void loadContainer(Container container);
-//
-//    // Abstract method to unload a container from the vehicle.
-//    public abstract void unloadContainer(Container container);
-//
-//    public abstract double calulateRequiredFuel(Port destinatedPort);
-//
-//    public String getId() {
-//        return id;
-//    }
-//
-//    public String getName() {
-//        return name;
-//    }
-//
-//    public double getCurrentFuel() {
-//        return currentFuel;
-//    }
-//
-//    public double getCarryingCapacity() {
-//        return carryingCapacity;
-//    }
-//
-//    public double getFuelCapacity() {
-//        return fuelCapacity;
-//    }
-//
-//    public Port getCurrentPort() {
-//        return currentPort;
-//    }
-//
-//    public int getTotalContainers() {
-//        return totalContainers;
-//    }
-//
-//    public List<Container> getContainers() {
-//        return containers;
-//    }
-//
-//    public String getContainersAsString() {
-//        StringBuilder result = new StringBuilder();
-//        for (Container container : containers) {
-//            result.append(container.getId()).append(", "); // Append container ID and a comma
-//        }
-//        // Remove the trailing comma and space, if there are containers
-//        if (result.length() > 0) {
-//            result.delete(result.length() - 2, result.length());
-//        }
-//        return result.toString();
-//    }
-//
-//
-//@Override
-//    public String toString() {
-//        return String.format("ID: %s, Type: %s, Name: %s, Current Fuel: %.2f, " +
-//                        "Fuel Capacity: %.2f, Carrying Capacity: %.2f, Remaining Capacity: %.2f, " +
-//                        "Current Port: {ID: %s, Name: %s}, Containers: {%s}",
-//                        getId(), getVehicleType(), getName(), getCurrentFuel(),
-//                        getFuelCapacity(), getCarryingCapacity(), getRemainingCapacity(),
-//                        getCurrentPort().getId(),
-//                        getCurrentPort().getName(), getContainersAsString());
-//    }
-//}
+import java.util.ArrayList;
+
+public class Vehicle {
+    private int vehicle_number;
+    private String vehicleName;
+    private double currentFuel;
+    private double fuelCapacity;
+    private double carryingCapacity;
+    private int totalContainer;
+    private int type;
+    // constructor
+    public Vehicle(int vehicle_number, String vehicleName, double currentFuel, double fuelCapacity,double carryingCapacity, int totalContainer, int type) {
+        this.vehicle_number = vehicle_number;
+        this.vehicleName = vehicleName;
+        this.currentFuel = currentFuel;
+        this.fuelCapacity = fuelCapacity;
+        this.carryingCapacity = carryingCapacity;
+        this.totalContainer = totalContainer;
+        this.type = type;
+    }
+    // getter and setter
+
+
+    public int getVehicle_number() {
+        return vehicle_number;
+    }
+
+    public void setVehicle_number(int vehicle_number) {
+        this.vehicle_number = vehicle_number;
+    }
+
+    public String getVehicleName() {
+        return vehicleName;
+    }
+
+    public void setVehicleName(String vehicleName) {
+        this.vehicleName = vehicleName;
+    }
+
+    public double getCurrentFuel() {
+        return currentFuel;
+    }
+
+    public void setCurrentFuel(double currentFuel) {
+        this.currentFuel = currentFuel;
+    }
+
+    public double getFuelCapacity() {
+        return fuelCapacity;
+    }
+
+    public void setFuelCapacity(double fuelCapacity) {
+        this.fuelCapacity = fuelCapacity;
+    }
+
+    public double getCarryingCapacity() {
+        return carryingCapacity;
+    }
+
+    public void setCarryingCapacity(double carryingCapacity) {
+        this.carryingCapacity = carryingCapacity;
+    }
+
+    public int getTotalContainer() {
+        return totalContainer;
+    }
+
+    public void setTotalContainer(int totalContainer) {
+        this.totalContainer = totalContainer;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+
+    public enum VehicleType {
+        SHIP(1),
+        BASIC_TRUCK(2),
+        REEFER_TRUCK(3),
+        TANKER_TRUCK(4);
+
+        private final int value;
+
+        VehicleType(int value) {
+            this.value = value;
+        }
+
+        public static VehicleType fromValue(int value) {
+            for (VehicleType type : VehicleType.values()) {
+                if (type.value == value) {
+                    return type;
+                }
+            }
+            throw new IllegalArgumentException("Invalid VehicleType value: " + value);
+        }
+    }
+    public String getVehicleTypeName() {
+        return Vehicle.VehicleType.fromValue(type).name();
+    }
+
+}
+

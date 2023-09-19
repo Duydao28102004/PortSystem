@@ -1,6 +1,5 @@
 public class Container {
 
-    private int c_number;
     private double Weight;
     private int Type;
     private int serialCode;
@@ -8,20 +7,14 @@ public class Container {
     // Define an enum for the container types
 
     // Constructor
-    public Container(int c_number, double weight, int type, int serialCode) {
-        this.c_number = c_number;
+    public Container(double weight, int type, int serialCode) {
+
         Weight = weight;
         Type = type;
         this.serialCode = serialCode;
     }
 
     // Setter & Getter
-    public int getC_number() {
-        return c_number;
-    }
-    public void setC_number(int c_number) {
-        this.c_number = c_number;
-    }
     public double getWeight() {
         return Weight;
     }
@@ -59,9 +52,6 @@ public class Container {
         ContainerType(int value) {
             this.value = value;
         }
-        public int getValue() {
-            return value;
-        }
         public static ContainerType fromValue(int value) {
             for (ContainerType type : ContainerType.values()) {
                 if (type.value == value) {
@@ -73,5 +63,10 @@ public class Container {
     }
     public String getContainerTypeName() {
         return ContainerType.fromValue(Type).name();
+    }
+
+    @Override
+    public String toString() {
+        return String.valueOf(serialCode);
     }
 }

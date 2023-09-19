@@ -3,25 +3,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
-public class containerCRUD {
+public class ContainerCRUD {
     static void createContainer() {
         List<Port> ports = readContainer();
         Scanner scanner = new Scanner(System.in);
 
-        // ask user for information of container before create
-        System.out.print("Enter container weight: ");
-        double weight = scanner.nextDouble();
-        System.out.println("Choose Container Type:");
-        System.out.println("1. DRY_STORAGE");
-        System.out.println("2. OPEN_TOP");
-        System.out.println("3. OPEN_SIDE");
-        System.out.println("4. REFRIGERATED");
-        System.out.println("5. LIQUID");
-        System.out.print("Enter container type (1 -> 5): ");
-        int type = scanner.nextInt();
 
         // print all available ports with free slot for container
-        System.out.println("Available ports:");
+        System.out.println("Available ports to store container:");
         int checker = 0;
         for (Port port : ports) {
             List<Container> tempCon = port.getContainers();
@@ -40,40 +29,28 @@ public class containerCRUD {
         // enter port ID where user want to store the container
         System.out.print("Enter port ID where container is located: ");
         int tempPortID = scanner.nextInt();
-        int portID = tempPortID - 1;
-        int ID = autoGenerateContainerID(tempPortID);
+        createContainerInPort(tempPortID);
+    }
+    static void createContainerInPort(int PortID) {
+        List<Port> ports = readContainer();
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter container weight: ");
+        double weight = scanner.nextDouble();
+        System.out.println("Choose Container Type:");
+        System.out.println("1. DRY_STORAGE");
+        System.out.println("2. OPEN_TOP");
+        System.out.println("3. OPEN_SIDE");
+        System.out.println("4. REFRIGERATED");
+        System.out.println("5. LIQUID");
+        System.out.print("Enter container type (1 -> 5): ");
+        int type = scanner.nextInt();
+        int portID = PortID - 1;
         int serialCode = generateSerialCode();
 
         //add container to correct port in ports list and save it back to file
-        Container container = new Container(ID, weight, type, serialCode);
+        Container container = new Container(weight, type, serialCode);
         ports.get(portID).addContainer(container);
         writeBackToFileContainer(ports);
-    }
-    static int autoGenerateContainerID(int portID) {
-        int containerID = 1;
-        // create a reader to container_data.txt
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("resources/container_data.txt"))) {
-            String line;
-            // loop through all lines in the file
-            while ((line = bufferedReader.readLine()) != null) {
-                // separate information in line into variable
-                String[] parts = line.split(" ");
-                // check the valid formation
-                if (parts.length >= 2 && !parts[0].isEmpty()) {
-                    int id = Integer.parseInt(parts[1]);
-                    int currentPortID = Integer.parseInt(parts[0]);
-                    if (id >= containerID && currentPortID == portID) {
-                        // add 1 to ID if find any equal id or larger
-                        containerID = id + 1;
-                    }
-                }
-            }
-        } catch (IOException e) {
-            // fail notification while reading file
-            System.err.println("An error occurred while reading the file: " + e.getMessage());
-        }
-        // return ID after calculate
-        return containerID;
     }
     static int generateSerialCode() {
         LocalDateTime now = LocalDateTime.now();
@@ -87,24 +64,23 @@ public class containerCRUD {
         return serialCode;
     }
     static List<Port> readContainer() {
-        List<Port> ports = portCRUD.readPorts();
+        List<Port> ports = PortCRUD.readPorts();
         // create a reader to port_data.txt
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader("resources/container_data.txt"))) {
             // read each line and put it in line
             String line;
             // loop to read all lines in the file
             while ((line = bufferedReader.readLine()) != null) {
-                // read the line out and put it in seperate parts
+                // read the line out and put it in separate parts
                 String[] parts = line.split(" ");
                 // check all parts in correct format
-                if (parts.length >= 5) {
+                if (parts.length >= 4) {
                     // put each part to temp container
                     int portID = Integer.parseInt(parts[0]) - 1;
-                    int c_number = Integer.parseInt(parts[1]);
-                    double weight = Double.parseDouble(parts[2]);
-                    int type = Integer.parseInt(parts[3]);
-                    int serialCode = Integer.parseInt(parts[4]);
-                    Container tempCon = new Container(c_number, weight, type, serialCode);
+                    double weight = Double.parseDouble(parts[1]);
+                    int type = Integer.parseInt(parts[2]);
+                    int serialCode = Integer.parseInt(parts[3]);
+                    Container tempCon = new Container(weight, type, serialCode);
                     // put temp container back to correct port in the list
                     ports.get(portID).addContainer(tempCon);
                 } else {
@@ -117,7 +93,7 @@ public class containerCRUD {
         }
         return ports;
     }
-    static void printSelectedContainers() {
+    static void printContainers() {
         List<Port> ports = readContainer();
         // loop through ports and print out all containers in each port
         for (Port port : ports) {
@@ -126,14 +102,22 @@ public class containerCRUD {
             printContainersInPort(tempContainers);
         }
     }
+    static void printContainersWithPortID(int PortID) {
+        List<Port> ports = readContainer();
+        System.out.println("Port ID: " + ports.get(PortID - 1).getP_number() + ". " + ports.get(PortID - 1).getPortName());
+        List<Container> tempContainers = ports.get(PortID - 1).getContainers();
+        printContainersInPort(tempContainers);
+    }
     static void printContainersInPort(List<Container> containersInPort) {
         // loop container list and print it out
+        int countContainer = 1;
         for (Container container : containersInPort) {
-            System.out.println("Container ID: " + container.getC_number());
+            System.out.println("Container ID: " + countContainer);
             System.out.println("Container weight: " + container.getWeight());
             System.out.println("Container type: " + container.getContainerTypeName());
             System.out.println("Container serial code: " + container.getSerialCode());
             System.out.println("   **********   ");
+            countContainer++;
         }
     }
     static Port portExist(List<Port> ports, int portID) {
@@ -154,16 +138,19 @@ public class containerCRUD {
         // Ask the user for the port ID
         System.out.print("Enter the port ID where the container is located: ");
         int portIDToUpdate = scanner.nextInt();
-        portIDToUpdate -= 1;
-
-        if (portExist(ports, portIDToUpdate) == null) {
-            System.out.println("Port with ID " + portIDToUpdate + " was not found.");
-            return;
-        }
-        Port selectedPort = ports.get(portIDToUpdate);
+        Port selectedPort = ports.get(portIDToUpdate - 1);
 
         List<Container> containersInPort = selectedPort.getContainers();
-
+        enterContainerUpdateInfo(containersInPort,selectedPort,ports);
+    }
+    static void updateContainersInSpecificPort(int PortID) {
+        List<Port> ports = readContainer();
+        Port selectedPort = ports.get(PortID - 1);
+        List<Container> containersInPort = selectedPort.getContainers();
+        enterContainerUpdateInfo(containersInPort,selectedPort,ports);
+    }
+    static void enterContainerUpdateInfo(List<Container> containersInPort, Port selectedPort, List<Port> ports) {
+        Scanner scanner = new Scanner(System.in);
         if (containersInPort.isEmpty()) {
             System.out.println("No containers found in port " + selectedPort.getPortName());
             return;
@@ -172,14 +159,22 @@ public class containerCRUD {
         // print out all containers in selected port and ask the user for the container ID to update
         System.out.println("Containers in port " + selectedPort.getPortName() + ":");
         printContainersInPort(containersInPort);
-        System.out.print("Enter the container ID you want to update: ");
-        int containerIDToUpdate = scanner.nextInt();
+        int containerIDToUpdate = 0;
+        while (true) {
+            System.out.print("Enter the container ID you want to update: ");
+            containerIDToUpdate = scanner.nextInt();
+            if (containersInPort.size() >= containerIDToUpdate - 1) {
+                break;
+            }
+            System.out.println("Invalid container ID, please try again");
+        }
+        containerIDToUpdate = containerIDToUpdate - 1;
 
         // loop through the selected port's containers to find selected container
         boolean containerFound = false;
 
         for (Container container : containersInPort) {
-            if (container.getC_number() == containerIDToUpdate) {
+            if (containersInPort.get(containerIDToUpdate) == container) {
                 System.out.print("Enter new weight: ");
                 double tempWeight = scanner.nextDouble();
                 System.out.println("Choose Container Type:");
@@ -217,9 +212,6 @@ public class containerCRUD {
         Scanner scanner = new Scanner(System.in);
 
         //ask user for port ID where delete container located
-        for (Port port : ports) {
-            System.out.println(port.getP_number() + ". " + port.getPortName());
-        }
         System.out.print("Enter the port ID where you want to delete a container: ");
         int deletePortID = scanner.nextInt();
 
@@ -228,12 +220,21 @@ public class containerCRUD {
             System.out.println("Port with ID " + deletePortID + " was not found.");
             return;
         }
-        deletePortID -= 1;
-        Port selectedPort = ports.get(deletePortID);
+        Port selectedPort = ports.get(deletePortID - 1);
 
         // check if the port has any container or not
         List<Container> containersInPort = selectedPort.getContainers();
 
+        deleteContainerWithGivenInfo(containersInPort, selectedPort, ports);
+    }
+    static void deleteContainerInSpecificPort(int PortID) {
+        List<Port> ports = readContainer();
+        Port selectedPort = ports.get(PortID - 1);
+        List<Container> containersInPort = selectedPort.getContainers();
+        deleteContainerWithGivenInfo(containersInPort, selectedPort, ports);
+    }
+    static void deleteContainerWithGivenInfo(List<Container> containersInPort, Port selectedPort, List<Port> ports) {
+        Scanner scanner = new Scanner(System.in);
         if (containersInPort.isEmpty()) {
             System.out.println("No containers found in port " + selectedPort.getPortName());
             return;
@@ -244,12 +245,21 @@ public class containerCRUD {
         printContainersInPort(containersInPort);
 
         System.out.print("Enter the container ID you want to delete: ");
-        int deleteContainerID = scanner.nextInt();
+        int deleteContainerID = 0;
+        while (true) {
+            System.out.print("Enter the container ID you want to update: ");
+            deleteContainerID = scanner.nextInt();
+            if (containersInPort.size() >= deleteContainerID - 1) {
+                break;
+            }
+            System.out.println("Invalid container ID, please try again");
+        }
+        deleteContainerID = deleteContainerID - 1;
 
         // check is the selected container ID exist or not and if exist the system will delete it
         boolean containerFound = false;
         for (Container container : containersInPort) {
-            if (container.getC_number() == deleteContainerID) {
+            if (containersInPort.get(deleteContainerID) == container) {
                 // remove and make the flag true when found
                 containersInPort.remove(container);
                 containerFound = true;
@@ -259,29 +269,23 @@ public class containerCRUD {
 
         // notification and count the container number after delete
         if (containerFound) {
-            // count again section
-            for (int i = 0; i < containersInPort.size(); i++) {
-                containersInPort.get(i).setC_number(i + 1);
-            }
             // success notification
             System.out.println("Container with ID " + deleteContainerID + " has been deleted from port " + selectedPort.getPortName());
             writeBackToFileContainer(ports);
         } else {
             // fail to find notification
             System.out.println("Container with ID " + deleteContainerID + " was not found in port " + selectedPort.getPortName());
+
         }
     }
-
     static void writeBackToFileContainer(List<Port> ports) {
         try (FileWriter fileWriter = new FileWriter("resources/container_data.txt");
              BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            // loop the ports and print container in each port to port_data.txt file
+            // loop the ports and print container in each port to container_data.txt file
             for (Port port : ports) {
                 List<Container> containers = port.getContainers();
                 for (Container container : containers) {
                     bufferedWriter.write(String.valueOf(port.getP_number()));
-                    bufferedWriter.write(" ");
-                    bufferedWriter.write(String.valueOf(container.getC_number()));
                     bufferedWriter.write(" ");
                     bufferedWriter.write(String.valueOf(container.getWeight()));
                     bufferedWriter.write(" ");
@@ -292,6 +296,7 @@ public class containerCRUD {
                 }
             }
             // success notification
+            bufferedWriter.close();
             System.out.println("Changes have been saved!");
         } catch (IOException e) {
             // fail notification

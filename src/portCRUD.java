@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class portCRUD {
+public class PortCRUD {
     static void createPort() {
         ArrayList<Port> ports = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
@@ -102,6 +102,18 @@ public class portCRUD {
             return;
         }
         int portID = tempPortID - 1;
+        enterUpdatePortInfo(ports, portID, scanner);
+        // save the port back to file again
+        writeBackToFile(ports, false);
+    }
+    static void updateSpecificPort(int PortID) {
+        Scanner scanner = new Scanner(System.in);
+        int portID = PortID - 1;
+        List<Port> ports = readPorts();
+        enterUpdatePortInfo(ports, portID, scanner);
+        writeBackToFile(ports, false);
+    }
+    static void enterUpdatePortInfo(List<Port> ports, int portID, Scanner scanner) {
         // ask user for information they want to update
         System.out.print("Enter new port name (Enter skip to skip): ");
         String temp1 = scanner.next();
@@ -128,12 +140,9 @@ public class portCRUD {
         if (!temp5.equals("skip")) {
             ports.get(portID).setLandingCap(Integer.parseInt(temp5));
         }
-        scanner.close();
-        // save the port back to file again
-        writeBackToFile(ports, false);
     }
     static void deletePort() {
-        List<Port> ports = containerCRUD.readContainer();
+        List<Port> ports = ContainerCRUD.readContainer();
         Scanner scanner = new Scanner(System.in);
         // print out port list and ask user for port ID they want to delete
         printPorts();
@@ -159,7 +168,7 @@ public class portCRUD {
             ports.get(i).setP_number(i + 1);
         }
         writeBackToFile(ports, false);
-        containerCRUD.writeBackToFileContainer(ports);
+        ContainerCRUD.writeBackToFileContainer(ports);
     }
     static void writeBackToFile(List<Port> ports, Boolean append) {
         try {

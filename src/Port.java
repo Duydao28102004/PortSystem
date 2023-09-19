@@ -8,10 +8,10 @@ public class Port {
     private double longitude;
     private int storingCap;
     private int landingCap;
-    private  List<Container> containers;
+    private List<Container> containers;
+    private List<Vehicle> vehicles;
 
-
-//    constructor
+    //    constructor
     public Port(int p_number, String portName, double latitude, double longitude, int storingCap, int landingCap) {
         this.p_number = p_number;
         this.portName = portName;
@@ -20,9 +20,10 @@ public class Port {
         this.storingCap = storingCap;
         this.landingCap = landingCap;
         this.containers = new ArrayList<>();
+        this.vehicles = new ArrayList<>();
     }
 
-//    get value from the user
+    //    get value from the user
     public int getP_number() {
         return p_number;
     }
@@ -47,7 +48,7 @@ public class Port {
         return landingCap;
     }
 
-//    set value from user
+    //    set value from user
     public void setP_number(int p_number) {
         this.p_number = p_number;
     }
@@ -71,6 +72,7 @@ public class Port {
     public void setLandingCap(int landingCap) {
         this.landingCap = landingCap;
     }
+
     public void addContainer(Container container) {
         if (containers.size() < storingCap) {
             containers.add(container);
@@ -78,10 +80,36 @@ public class Port {
             System.out.println("Port has reached its storing capacity. Cannot add more containers.");
         }
     }
+
     public void removeContainer(Container container) {
         containers.remove(container);
     }
+
     public List<Container> getContainers() {
         return containers;
+    }
+
+    public void addVehicle(Vehicle vehicle) {
+        if (vehicle.getType() == 1) {
+            vehicles.add(vehicle);
+            return;
+        }
+        int countvehicles = 0;
+        for (Vehicle tempVehicle : vehicles) {
+            if (vehicle.getType() == 2 || vehicle.getType() == 3 || vehicle.getType() == 4) {
+                countvehicles++;
+            }
+        }
+        if (countvehicles < landingCap) {
+            vehicles.add(vehicle);
+        } else {
+            System.out.println("Port has reached its landing capacity. Cannot add more vehicles.");
+        }
+    }
+    public void removeVehicle(Vehicle vehicle){
+        vehicles.remove(vehicle);
+    }
+    public List<Vehicle> getVehicles() {
+        return vehicles;
     }
 }

@@ -1,67 +1,62 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        int userChoice = 1;
-        Scanner scanner = new Scanner(System.in);
 
-        while (userChoice != 0) {
-            System.out.println("Port command list");
-            System.out.println("1. Create port");
-            System.out.println("2. Print all ports");
-            System.out.println("3. Update port");
-            System.out.println("4. Delete port");
-            System.out.println("5. Create container");
-            System.out.println("6. Print all containers");
-            System.out.println("7. Update container");
-            System.out.println("8. Delete container");
-            System.out.println("0. Exit the program");
-            System.out.print("Choose your command: ");
-            userChoice = scanner.nextInt();
-            System.out.println("   *********   ");
+        HashMap<String, String> passwords = new HashMap<>();
+        HashMap<String, Integer> userTypes = new HashMap<>();
+        readLoginData(passwords, userTypes);
 
-            switch (userChoice) {
-                case 1:
-                    portCRUD.createPort();
+        while (true) {
+            Scanner scanner = new Scanner(System.in);
+            System.out.print("Enter your username: ");
+            String inputUserName = scanner.next();
+            System.out.print("Enter your password: ");
+            String inputPassword = scanner.next();
+            if (passwords.containsKey(inputUserName)) {
+                String storedPassword = passwords.get(inputUserName);
+                if (storedPassword.equals(inputPassword)) {
+                    System.out.println("Welcome user " + inputUserName);
+                    if (userTypes.get(inputUserName) == 0) {
+                        User.admin();
+                    } else {
+                        System.out.println("Port " + userTypes.get(inputUserName) + " commands:");
+                        User.portManager(userTypes.get(inputUserName));
+                    }
                     break;
-                case 2:
-                    portCRUD.printPorts();
-                    break;
-                case 3:
-                    portCRUD.updatePorts();
-                    break;
-                case 4:
-                    portCRUD.deletePort();
-                    break;
-                case 5:
-                    containerCRUD.createContainer();
-                    break;
-                case 6:
-                    containerCRUD.printSelectedContainers();
-                    break;
-                case 7:
-                    containerCRUD.updateContainer();
-                    break;
-                case 8:
-                    containerCRUD.deleteContainer();
-                    break;
-                case 0:
-                    System.out.println("Goodbye!");
-                    break;
-                default:
-                    System.out.println("You entered a wrong command code!");
-                    break;
-            }
-
-            if (userChoice != 0) {
-                System.out.print("Do you want to continue? (1 for Yes, 0 for No): ");
-                int continueChoice = scanner.nextInt();
-                if (continueChoice != 1) {
-                    userChoice = 0;
-                    System.out.println("Goodbye!");
+                } else {
+                    System.out.println("Invalid password, please try again");
                 }
+            } else {
+                System.out.println("Invalid username, please try again");
             }
         }
-        scanner.close();
+    }
+
+    static void readLoginData(HashMap<String, String> passwords, HashMap<String, Integer> userTypes) {
+        try {
+            FileReader fileReader = new FileReader("resources/login_data.txt");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+
+            while ((line = bufferedReader.readLine()) != null) {
+
+                String[] parts = line.split(" ");
+                if (parts.length == 3) {
+                    String username = parts[0];
+                    String password = parts[1];
+                    int userType = Integer.parseInt(parts[2]);
+                    passwords.put(username, password);
+                    userTypes.put(username, userType);
+                }
+            }
+            bufferedReader.close();
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
     }
 }
