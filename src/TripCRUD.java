@@ -579,9 +579,25 @@ public class TripCRUD {
         List<Trip> trips = readTrips();
 
         System.out.println("Trips on " + givenDate + ":");
-
+        System.out.println("Departure trip:");
         for (Trip trip : trips) {
             if (trip.getDepartureDate().equals(givenDate)) {
+                System.out.println("Trip Number: " + trip.getTrip_number());
+                System.out.println("Vehicle: " + trip.getVehicle().getVehicleName());
+                System.out.println("Departure Port: " + trip.getDeparturePort().getPortName());
+                System.out.println("Destination Port: " + trip.getDestinationPort().getPortName());
+                System.out.println("Containers:");
+                ContainerCRUD.printContainersInPort(trip.getLoadContainers());
+                System.out.println("Departure Date: " + trip.getDepartureDate());
+                System.out.println("Arrival Date: " + trip.getArrivalDate());
+                System.out.println("Fuel Consumption: " + trip.getFuelConsumption());
+                System.out.println("Status: " + trip.getTripStatusName());
+                System.out.println();
+            }
+        }
+        System.out.println("Arrival trip");
+        for (Trip trip : trips) {
+            if (trip.getArrivalDate().equals(givenDate)) {
                 System.out.println("Trip Number: " + trip.getTrip_number());
                 System.out.println("Vehicle: " + trip.getVehicle().getVehicleName());
                 System.out.println("Departure Port: " + trip.getDeparturePort().getPortName());
