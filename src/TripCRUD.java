@@ -7,11 +7,13 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TripCRUD {
+    // create trip with port ID
     static void createTrip(int PortID) {
         List<Port> ports = VehicleCRUD.readVehicle();
         Scanner scanner = new Scanner(System.in);
         PortCRUD.printPorts();
         Port startingPort;
+        // if portID = 0 enter admin create trip mode
         if (PortID == 0) {
             System.out.print("Enter starting port ID: ");
             int startingPortID = scanner.nextInt();
@@ -22,11 +24,14 @@ public class TripCRUD {
                 System.out.println("Port with ID " + startingPortID + " was not found.");
                 return;
             }
-        } else {
+        }
+        // if portID != 0 enter port manager create trip mode
+        else {
             int startingPortID = PortID;
             startingPort = ContainerCRUD.portExist(ports, startingPortID);
         }
 
+        // ask user for destination port ID
         System.out.print("Enter destination port ID: ");
         int destinationPortID = scanner.nextInt();
 
@@ -58,7 +63,7 @@ public class TripCRUD {
         System.out.print("Enter vehicle ID you want to use: ");
         int selectedVehicleID = scanner.nextInt();
 
-
+        // Find the selected vehicle
         Vehicle selectedVehicle = null;
         for (Vehicle vehicle : vehiclesInStartingPort) {
             if (vehicle.getVehicle_number() == selectedVehicleID) ;
@@ -244,6 +249,7 @@ public class TripCRUD {
                 }
             }
         }
+        // find the selected vehicle in starting port
         boolean vehicleFound = false;
         for (Vehicle vehicle : startingPort.getVehicles()) {
             if (vehicle.getVehicle_number() == selectedVehicle.getVehicle_number()) {
@@ -252,7 +258,7 @@ public class TripCRUD {
                 break; // Exit the loop once the vehicle is found and removed
             }
         }
-
+        // if vehicle not found in starting port it will notify user
         if (!vehicleFound) {
             System.out.println("Error: The selected vehicle is not in the starting port.");
             return; // You may want to return or handle the situation accordingly
@@ -275,8 +281,7 @@ public class TripCRUD {
         }
 
         selectedVehicle.setCurrentFuel(selectedVehicle.getCurrentFuel() - totalFuelConsumption);
-
-
+        // find remove container in starting port and add to a list
         for (Container container : startingPort.getContainers()) {
             for (Container selectedContainer : selectedContainers) {
                 if (container.getSerialCode() == selectedContainer.getSerialCode()) {
@@ -295,7 +300,7 @@ public class TripCRUD {
         VehicleCRUD.writeVehiclesBackToFile(ports);
         writeTripToFile(trips);
     }
-
+    // this method is used to find containers have type suitable with vehicle
     static boolean isContainerCompatibleWithVehicle(Container container, Vehicle vehicle) {
         int containerType = container.getType();
         int vehicleType = vehicle.getType();
@@ -317,7 +322,7 @@ public class TripCRUD {
             return false;
         }
     }
-
+    // this method is used to check if destination port have enough space for vehicle and containers
     static boolean isDestinationPortAvailable(Port destinationPort, Vehicle selectedVehicle) {
         int currentContainerNum = 0;
         for (Container container : destinationPort.getContainers()) {
@@ -327,6 +332,7 @@ public class TripCRUD {
         if (remainingContainerSlot == 0) {
             return false;
         }
+        // Check if the destination port has enough space for the vehicle
         if (selectedVehicle.getType() != 1) {
             int currentVehicleNum = 0;
             for (Vehicle vehicle : destinationPort.getVehicles()) {
@@ -339,10 +345,11 @@ public class TripCRUD {
         }
         return true;
     }
-
+    // this method is used to calculate to total fuel consumption for trip
     static double totalFuelConsumptionForTrip(List<Container> selectedContainers, Port startingPort, Port destinationPort, Vehicle selectedVehicle) {
         double fuelConsumptionPerKm = 0;
 
+        // find suitable fuel consumption for each type of vehicle and add to total consumption per km
         if (selectedVehicle.getType() == 1) {
             for (Container container : selectedContainers) {
                 switch (container.getType()) {
@@ -376,19 +383,26 @@ public class TripCRUD {
         double startY = startingPort.getLongitude();
         double desX = destinationPort.getLatitude();
         double desY = destinationPort.getLongitude();
+        // calculate distance between 2 ports
         double distanceBetweenPort = Math.sqrt(Math.pow(desX - startX, 2) + Math.pow(desY - startY, 2));
+        // return total fuel consumption
         return distanceBetweenPort * fuelConsumptionPerKm;
     }
 
+    // this method is used to read trip from file
     static List<Trip> readTrips() {
         ArrayList<Trip> trips = new ArrayList<>();
         List<Port> ports = VehicleCRUD.readVehicle();
         try {
+            // create a reader to trip_data.txt file
             FileReader fileReader = new FileReader("resources/trip_data.txt");
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line;
+            // loop through all lines in the file
             while ((line = bufferedReader.readLine()) != null) {
+                // divide the line into parts and put it in variables
                 String[] parts = line.split(" ");
+                // add each parts of line and put it in variables
                 int Trip_number = Integer.parseInt(parts[0]);
                 int Vehicle_number = Integer.parseInt(parts[1]);
                 Vehicle selectedVehicle = null;
@@ -430,22 +444,27 @@ public class TripCRUD {
                 String arrivalDate = parts[6];
                 double fuelConsumption = Double.parseDouble(parts[7]);
                 int tripStatus = Integer.parseInt(parts[8]);
+                // add it to trip and save in a list
                 Trip trip = new Trip(Trip_number, selectedVehicle, departurePort, arrivalPort, selectedContainer, departureDate, arrivalDate, fuelConsumption, tripStatus);
                 trips.add(trip);
             }
         } catch (IOException e) {
+            System.err.println("An error occurred while reading the file: " + e.getMessage());
         }
         return trips;
     }
 
+    //this method is used to print all trip
     static void printAllTrip() {
         List<Trip> trips = readTrips();
         printSpecifyTrip(trips);
     }
+    // this method is used to print trips in starting port
     static void printTripsFromStartingPort(int PortID) {
         System.out.println("Trip start from port ID " + PortID + ": ");
         List<Trip> trips = readTrips();
         ArrayList<Trip> selectedTrips = new ArrayList<>();
+        // loop through all trips and add trip start from selected port to a list
         for (Trip trip : trips) {
             if (trip.getDeparturePort().getP_number() == PortID) {
                 selectedTrips.add(trip);
@@ -458,7 +477,9 @@ public class TripCRUD {
         printSpecifyTrip(selectedTrips);
     }
 
+    // this method is used to print specific trip
     static void printSpecifyTrip(List<Trip> trips) {
+        // loop through all trips and print it out
         for (Trip trip : trips) {
             System.out.println("Trip number: " + trip.getTrip_number());
             System.out.println("Vehicle: " + trip.getVehicle().getVehicleName());
@@ -473,7 +494,7 @@ public class TripCRUD {
             System.out.println();
         }
     }
-
+    // this method is used to delete trip
     static void deleteTrip() {
         Scanner scanner = new Scanner(System.in);
         List<Trip> trips = readTrips();
@@ -505,11 +526,13 @@ public class TripCRUD {
         }
     }
 
-
+    //this method is used to write trips back to file
     static void writeTripToFile(List<Trip> trips) {
         try {
+            // create a writer to trip_data.txt file
             FileWriter fileWriter = new FileWriter("resources/trip_data.txt");
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            // loop through all trips and write it back to file
             for (Trip trip : trips) {
                 bufferedWriter.write(String.valueOf(trip.getTrip_number()));
                 bufferedWriter.write(" ");
@@ -536,12 +559,15 @@ public class TripCRUD {
             bufferedWriter.close();
             System.out.println("Data have been saved");
         } catch (IOException e) {
+            // fail to write notification
             System.err.println("An error occurred while writing the file: " + e.getMessage());
         }
     }
 
+    // this method is used to calculate total fuel consumption on departure day
     static double calculateTotalFuelConsumptionOnDepartureDay(String departureDate) {
         List<Trip> trips = readTrips();
+        // loop through all trips and calculate total fuel consumption
         double totalFuelConsumption = 0;
         for (Trip trip : trips) {
             if (trip.getDepartureDate().equals(departureDate)) {
@@ -550,17 +576,19 @@ public class TripCRUD {
         }
         return totalFuelConsumption;
     }
-
+    // this method is used to print all trips between 2 dates
     static void listTripsInDateRange(String startDateStr, String endDateStr) {
         List<Trip> trips = readTrips();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         try {
+            // parse the date string to date format
             Date startDate = dateFormat.parse(startDateStr);
             Date endDate = dateFormat.parse(endDateStr);
 
             System.out.println("Trips within the date range " + startDateStr + " to " + endDateStr + ":");
 
             for (Trip trip : trips) {
+                // parse the departure date to date format
                 Date tripDate = dateFormat.parse(trip.getDepartureDate());
                 if (!tripDate.before(startDate) && !tripDate.after(endDate)) {
                     System.out.println("Trip Number: " + trip.getTrip_number());
@@ -572,16 +600,21 @@ public class TripCRUD {
                 }
             }
         } catch (ParseException e) {
+            // fail to parse notification
             System.out.println("Invalid date format. Please use yyyy-MM-dd.");
         }
     }
+
+    // this method is used to print all trips on given day
     static void listTripsOnGivenDay(String givenDate) {
         List<Trip> trips = readTrips();
 
         System.out.println("Trips on " + givenDate + ":");
         System.out.println("Departure trip:");
         for (Trip trip : trips) {
+            // check if departure date equal to given date
             if (trip.getDepartureDate().equals(givenDate)) {
+                // print out trip information
                 System.out.println("Trip Number: " + trip.getTrip_number());
                 System.out.println("Vehicle: " + trip.getVehicle().getVehicleName());
                 System.out.println("Departure Port: " + trip.getDeparturePort().getPortName());
@@ -597,7 +630,9 @@ public class TripCRUD {
         }
         System.out.println("Arrival trip");
         for (Trip trip : trips) {
+            // check if arrival date equal to given date
             if (trip.getArrivalDate().equals(givenDate)) {
+                // print out trip information
                 System.out.println("Trip Number: " + trip.getTrip_number());
                 System.out.println("Vehicle: " + trip.getVehicle().getVehicleName());
                 System.out.println("Departure Port: " + trip.getDeparturePort().getPortName());

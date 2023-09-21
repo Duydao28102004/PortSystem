@@ -4,8 +4,6 @@ public class Container {
     private int Type;
     private int serialCode;
 
-    // Define an enum for the container types
-
     // Constructor
     public Container(double weight, int type, int serialCode) {
 
@@ -38,7 +36,7 @@ public class Container {
     public void setSerialCode(int serialCode) {
         this.serialCode = serialCode;
     }
-    // Getter and Setter for the Port
+    // Enum for ContainerType
 
     public enum ContainerType {
         DRY_STORAGE(1),
@@ -48,10 +46,11 @@ public class Container {
         LIQUID(5);
 
         private final int value;
-
+        // Constructor for ContainerType
         ContainerType(int value) {
             this.value = value;
         }
+        // Getter for ContainerType value
         public static ContainerType fromValue(int value) {
             for (ContainerType type : ContainerType.values()) {
                 if (type.value == value) {
@@ -61,10 +60,11 @@ public class Container {
             throw new IllegalArgumentException("Invalid ContainerType value: " + value);
         }
     }
+    // Getter for ContainerType name
     public String getContainerTypeName() {
         return ContainerType.fromValue(Type).name();
     }
-
+    // Override toString method
     @Override
     public String toString() {
         return String.valueOf(serialCode);

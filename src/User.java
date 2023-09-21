@@ -1,10 +1,14 @@
 import java.util.Scanner;
 
 public class User {
+
+    // port manager function mode
     static void portManager(int userPortID) {
             Scanner scanner = new Scanner(System.in);
 
+            // loop until user choose to exit
             while (true) {
+                // print all tabs
                 System.out.println("Choose a tab:");
                 System.out.println("1. Port");
                 System.out.println("2. Container");
@@ -20,6 +24,7 @@ public class User {
                     break;
                 }
 
+                // check user choice and call corresponding function
                 switch (tabChoice) {
                     case 1:
                         handlePortTabManager(scanner, userPortID);
@@ -43,10 +48,13 @@ public class User {
             }
             scanner.close();
     }
+    // admin function mode
     static void admin() {
         Scanner scanner = new Scanner(System.in);
 
+        // loop until user choose to exit
         while (true) {
+            // print all tabs
             System.out.println("Choose a tab:");
             System.out.println("1. Port");
             System.out.println("2. Container");
@@ -62,6 +70,7 @@ public class User {
                 break;
             }
 
+            // check user choice and call corresponding function
             switch (tabChoice) {
                 case 1:
                     handlePortTab(scanner);
@@ -86,10 +95,12 @@ public class User {
         scanner.close();
     }
 
+    // handle port tab
     private static void handlePortTab(Scanner scanner) {
         int userChoice = 1;
 
         while (userChoice != 0) {
+            // print all port commands
             System.out.println("Port commands:");
             System.out.println("1. Create port");
             System.out.println("2. Print all ports");
@@ -99,6 +110,7 @@ public class User {
             System.out.print("Choose your command: ");
             userChoice = scanner.nextInt();
 
+            // check user choice and call corresponding function
             switch (userChoice) {
                 case 1:
                     PortCRUD.createPort();
@@ -121,16 +133,20 @@ public class User {
             }
         }
     }
+
+    // handle port tab for port manager
     private static void handlePortTabManager(Scanner scanner, int userPortID) {
         int userChoice = 1;
 
         while (userChoice != 0) {
+            // print all port commands
             System.out.println("Port commands:");
             System.out.println("1. Update port");
             System.out.println("0. Back to main menu");
             System.out.print("Choose your command: ");
             userChoice = scanner.nextInt();
 
+            // check user choice and call corresponding function
             switch (userChoice) {
                 case 1:
                     PortCRUD.updateSpecificPort(userPortID);
@@ -145,10 +161,12 @@ public class User {
         }
     }
 
+    // handle container tab
     private static void handleContainerTab(Scanner scanner) {
         int userChoice = 1;
 
         while (userChoice != 0) {
+            // print all container commands
             System.out.println("Container commands:");
             System.out.println("1. Create container");
             System.out.println("2. Print all containers");
@@ -158,6 +176,7 @@ public class User {
             System.out.print("Choose your command: ");
             userChoice = scanner.nextInt();
 
+            // check user choice and call corresponding function
             switch (userChoice) {
                 case 1:
                     ContainerCRUD.createContainer();
@@ -180,10 +199,13 @@ public class User {
             }
         }
     }
+
+    // handle container tab for port manager
     private static void handleContainerTabManager(Scanner scanner, int userPortID) {
         int userChoice = 1;
 
         while (userChoice != 0) {
+            // print all container commands
             System.out.println("Container commands:");
             System.out.println("1. Create container");
             System.out.println("2. Print all containers");
@@ -193,6 +215,7 @@ public class User {
             System.out.print("Choose your command: ");
             userChoice = scanner.nextInt();
 
+            // check user choice and call corresponding function
             switch (userChoice) {
                 case 1:
                     ContainerCRUD.createContainerInPort(userPortID);
@@ -216,10 +239,12 @@ public class User {
         }
     }
 
+    // handle vehicle tab
     private static void handleVehicleTab(Scanner scanner) {
         int userChoice = 1;
 
         while (userChoice != 0) {
+            // print all vehicle commands
             System.out.println("Vehicle commands:");
             System.out.println("1. Create vehicle");
             System.out.println("2. Print all vehicles");
@@ -230,6 +255,7 @@ public class User {
             System.out.print("Choose your command: ");
             userChoice = scanner.nextInt();
 
+            // check user choice and call corresponding function
             switch (userChoice) {
                 case 1:
                     VehicleCRUD.createVehicle();
@@ -255,10 +281,13 @@ public class User {
             }
         }
     }
+
+    // handle vehicle tab for port manager
     private static void handleVehicleTabManager(Scanner scanner, int userPortID) {
         int userChoice = 1;
 
         while (userChoice != 0) {
+            // print all vehicle commands
             System.out.println("Vehicle commands:");
             System.out.println("1. Create vehicle");
             System.out.println("2. Print all vehicles");
@@ -269,6 +298,7 @@ public class User {
             System.out.print("Choose your command: ");
             userChoice = scanner.nextInt();
 
+            // check user choice and call corresponding function
             switch (userChoice) {
                 case 1:
                     VehicleCRUD.createVehicleInPort(userPortID);
@@ -295,10 +325,12 @@ public class User {
         }
     }
 
+    // handle trip tab
     private static void handleTripTab(Scanner scanner) {
         int userChoice = 1;
 
         while (userChoice != 0) {
+            // print all trip commands
             System.out.println("Trip commands:");
             System.out.println("1. Create Trip");
             System.out.println("2. Print all trip");
@@ -308,6 +340,7 @@ public class User {
             System.out.print("Choose your command: ");
             userChoice = scanner.nextInt();
 
+            // check user choice and call corresponding function
             switch (userChoice) {
                 case 1:
                     TripCRUD.createTrip(0);
@@ -330,10 +363,13 @@ public class User {
             }
         }
     }
+
+    // handle trip tab for port manager
     private static void handleTripTabManager(Scanner scanner, int userPortID) {
         int userChoice = 1;
 
         while (userChoice != 0) {
+            // print all trip commands
             System.out.println("Trip commands:");
             System.out.println("1. Create Trip");
             System.out.println("2. Print all trip");
@@ -341,6 +377,7 @@ public class User {
             System.out.print("Choose your command: ");
             userChoice = scanner.nextInt();
 
+            // check user choice and call corresponding function
             switch (userChoice) {
                 case 1:
                     TripCRUD.createTrip(userPortID);
@@ -357,10 +394,13 @@ public class User {
             }
         }
     }
+
+    // handle statistic operation tab
     private static void handleStatisticOperationTab(Scanner scanner) {
         int userChoice = 1;
 
         while (userChoice != 0) {
+            // print all statistic operation commands
             System.out.println("Statistic operation commands:");
             System.out.println("1. Get fuel in a day");
             System.out.println("2. Calculate how much weight of each type of all containers");
@@ -371,6 +411,7 @@ public class User {
             System.out.print("Choose your command: ");
             userChoice = scanner.nextInt();
 
+            // check user choice and call corresponding function
             switch (userChoice) {
                 case 1:
                     StatisticsOperations.getFuelInDay();

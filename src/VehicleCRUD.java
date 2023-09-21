@@ -3,10 +3,12 @@ import java.util.*;
 
 
 public class VehicleCRUD {
+    //    create vehicle
     static void createVehicle() {
         List<Port> ports = readVehicle();
         Scanner scanner = new Scanner(System.in);
         int vehicleID = autoGenerateVehicleID();
+        // ask user for vehicle information before create it
         System.out.print("Enter vehicle name: ");
         String vehicleName = scanner.next();
         System.out.print("Enter vehicle fuel capacity:");
@@ -54,10 +56,13 @@ public class VehicleCRUD {
         ports.get(portID).addVehicle(vehicle);
         writeVehiclesBackToFile(ports);
     }
+
+    // create vehicle in specific port
     static void createVehicleInPort(int PortID) {
         List<Port> ports = readVehicle();
         Scanner scanner = new Scanner(System.in);
         int vehicleID = autoGenerateVehicleID();
+        // ask user for vehicle information before create it
         System.out.print("Enter vehicle name: ");
         String vehicleName = scanner.next();
         System.out.print("Enter vehicle fuel capacity:");
@@ -88,12 +93,15 @@ public class VehicleCRUD {
                 return;
             }
         }
+        // enter port ID where user want to store the container
         Vehicle vehicle = new Vehicle(vehicleID, vehicleName, 0.0, fuelCapacity, carryingCapacity, 0, type);
         ports.get(PortID - 1).addVehicle(vehicle);
         writeVehiclesBackToFile(ports);
     }
+    // auto generate vehicle ID
     static int autoGenerateVehicleID() {
         int vehicleID = 1;
+        // Read the file to find the highest ID
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader("resources/vehicle_data.txt"))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -106,16 +114,21 @@ public class VehicleCRUD {
                 }
             }
         } catch (IOException e) {
+            // If the file doesn't exist, ignore the error and return the default ID
             System.err.println("An error occurred while reading the file: " + e.getMessage());
         }
         return vehicleID;
     }
+    // this method is used to print a vehicle list
     static void printListOfVehicle(List<Port> ports) {
         List<Vehicle> allVehicles = new ArrayList<>();
+        // Get all vehicles from all ports
         for (Port port : ports) {
             allVehicles.addAll(port.getVehicles());
         }
+        // Sort the vehicles by ID
         Collections.sort(allVehicles, Comparator.comparingInt(Vehicle::getVehicle_number));
+        // Print the list of vehicles
         for (Vehicle vehicle : allVehicles) {
             System.out.println("Vehicle ID: " + vehicle.getVehicle_number());
             System.out.println("Vehicle Name: " + vehicle.getVehicleName());
@@ -132,10 +145,12 @@ public class VehicleCRUD {
             System.out.println("----------------------------------");
         }
     }
+    // print all vehicle
     static void printAllVehicle() {
         List<Port> ports = readVehicle();
         printListOfVehicle(ports);
     }
+    // print vehicle in specific port with port ID
     static void printVehiclesWithPortID(int PortID) {
         List<Port> ports = readVehicle();
         for (Vehicle vehicle : ports.get(PortID - 1).getVehicles()) {
@@ -147,14 +162,17 @@ public class VehicleCRUD {
             System.out.println("----------------------------------");
         }
     }
+    // print vehicle in specific port
     static void printVehiclesInPort(Port selectedPort) {
         List<Vehicle> vehicles = selectedPort.getVehicles();
 
+        // check if there is no vehicle in selected port
         if (vehicles.isEmpty()) {
             System.out.println("No vehicles found in port " + selectedPort.getPortName());
             return;
         }
 
+        // print all vehicles in selected port
         System.out.println("Vehicles in Port " + selectedPort.getPortName() + ":");
         for (Vehicle vehicle : vehicles) {
             System.out.println("Vehicle ID: " + vehicle.getVehicle_number());
@@ -165,27 +183,36 @@ public class VehicleCRUD {
             System.out.println("----------------------------------");
         }
     }
+
+    // update vehicle
     static void updateVehicle() {
         List<Port> ports = readVehicle();
         Scanner scanner = new Scanner(System.in);
         printAllVehicle();
+        // ask user for vehicle ID they want to update
         System.out.print("Enter the ID of the vehicle you want to update: ");
         int vehicleID = scanner.nextInt();
         updateVehicleWithGivenInfo(ports, vehicleID);
     }
+
+    // update vehicle in specific port with given port ID
     static void updateVehicleInPort(int PortID) {
         List<Port> ports = readVehicle();
         Scanner scanner = new Scanner(System.in);
 
         printVehiclesInPort(ports.get(PortID - 1));
+
+        // ask user for vehicle ID they want to update
         System.out.print("Enter the ID of the vehicle you want to update: ");
         int vehicleID = scanner.nextInt();
         updateVehicleWithGivenInfo(ports, vehicleID);
     }
+    // update vehicle with given vehicle ID
     static void updateVehicleWithGivenInfo(List<Port> ports, int vehicleID) {
         Scanner scanner = new Scanner(System.in);
         // Find the vehicle with the given ID
         Vehicle targetVehicle = null;
+        // loop through all ports and vehicles to find the vehicle with given ID
         for (Port port : ports) {
             for (Vehicle vehicle : port.getVehicles()) {
                 if (vehicle.getVehicle_number() == vehicleID) {
@@ -198,6 +225,7 @@ public class VehicleCRUD {
             }
         }
 
+        // Check if the vehicle is found
         if (targetVehicle == null) {
             System.out.println("Vehicle with ID " + vehicleID + " not found.");
             return;
@@ -239,11 +267,14 @@ public class VehicleCRUD {
         System.out.println("Vehicle with ID " + vehicleID + " has been updated.");
     }
 
+    // read vehicle from file
     static List<Port> readVehicle() {
         List<Port> ports = ContainerCRUD.readContainer();
+        // Read the file vehicle_data.txt
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader("resources/vehicle_data.txt"))) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
+                // Divide the line into parts and put it in variables
                 String[] parts = line.split(" ");
                 if (parts.length >= 7) {
                     int vehicle_number = Integer.parseInt(parts[0]);
@@ -254,6 +285,7 @@ public class VehicleCRUD {
                     double carryingCapacity = Double.parseDouble(parts[5]);
                     int totalContainer = Integer.parseInt(parts[6]);
                     int type = Integer.parseInt(parts[7]);
+                    // Create a new vehicle and add it to the list
                     Vehicle vehicle = new Vehicle(vehicle_number,vehicleName,currentFuel,fuelCapacity,carryingCapacity,totalContainer,type);
                     ports.get(portID).addVehicle(vehicle);
                 } else {
@@ -266,6 +298,7 @@ public class VehicleCRUD {
         }
         return ports;
     }
+    // delete vehicle
     static void deleteVehicle() {
         List<Port> ports = readVehicle();
         Scanner scanner = new Scanner(System.in);
@@ -277,6 +310,8 @@ public class VehicleCRUD {
         int vehicleIDToDelete = scanner.nextInt();
         deleteVehicleWithGivenInfo(ports, vehicleIDToDelete);
     }
+
+    // delete vehicle in specific port with given port ID
     static void deleteVehicleInPort(int PortID) {
         List<Port> ports = readVehicle();
         Scanner scanner = new Scanner(System.in);
@@ -285,6 +320,8 @@ public class VehicleCRUD {
         int vehicleIDToDelete = scanner.nextInt();
         deleteVehicleWithGivenInfo(ports, vehicleIDToDelete);
     }
+
+    // delete vehicle with given vehicle ID
     static void deleteVehicleWithGivenInfo(List<Port> ports, int vehicleIDToDelete) {
         // Find the vehicle with the given ID and delete it
         boolean vehicleFound = false;
@@ -301,7 +338,9 @@ public class VehicleCRUD {
             }
         }
 
+        // Check if the vehicle is found
         if (!vehicleFound) {
+            //226
             System.out.println("Vehicle with ID " + vehicleIDToDelete + " not found.");
         } else {
             // Update the data file after deleting the vehicle
@@ -309,10 +348,14 @@ public class VehicleCRUD {
             System.out.println("Vehicle with ID " + vehicleIDToDelete + " has been deleted.");
         }
     }
+
+    // write vehicle back to file
     static void writeVehiclesBackToFile(List<Port> ports) {
         try {
+            // Create a writer to vehicle_data.txt file
             FileWriter fileWriter = new FileWriter("resources/vehicle_data.txt");
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            // Loop through all ports and vehicles
             for (Port port : ports) {
                 List<Vehicle> vehicles = port.getVehicles();
                 for (Vehicle vehicle : vehicles) {
@@ -335,11 +378,15 @@ public class VehicleCRUD {
                 }
             }
             bufferedWriter.close();
+            // print notification when the file is written successfully
             System.out.println("Data have been saved");
         } catch (IOException e) {
+            // print notification when the file is written unsuccessfully
             System.err.println("An error occurred while writing the file: " + e.getMessage());
         }
     }
+
+    // refuel vehicle
     static void refuelVehicle() {
         List<Port> ports = readVehicle();
         Scanner scanner = new Scanner(System.in);

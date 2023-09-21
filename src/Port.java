@@ -23,7 +23,7 @@ public class Port {
         this.vehicles = new ArrayList<>();
     }
 
-    //    get value from the user
+    //   getter and setter methods
     public int getP_number() {
         return p_number;
     }
@@ -73,6 +73,7 @@ public class Port {
         this.landingCap = landingCap;
     }
 
+    //   add and remove container
     public void addContainer(Container container) {
         if (containers.size() < storingCap) {
             containers.add(container);
@@ -84,11 +85,11 @@ public class Port {
     public void removeContainer(Container container) {
         containers.remove(container);
     }
-
+    //   get container list
     public List<Container> getContainers() {
         return containers;
     }
-
+    //  add and remove vehicle
     public void addVehicle(Vehicle vehicle) {
         if (vehicle.getType() == 1) {
             vehicles.add(vehicle);
@@ -109,6 +110,7 @@ public class Port {
     public void removeVehicle(Vehicle vehicle){
         vehicles.remove(vehicle);
     }
+    // get vehicle list
     public List<Vehicle> getVehicles() {
         return vehicles;
     }

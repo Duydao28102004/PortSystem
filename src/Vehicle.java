@@ -69,6 +69,7 @@ public class Vehicle {
         this.totalContainer = totalContainer;
     }
 
+    // get and set type in integer
     public int getType() {
         return type;
     }
@@ -77,7 +78,7 @@ public class Vehicle {
         this.type = type;
     }
 
-
+    // Enum for VehicleType
     public enum VehicleType {
         SHIP(1),
         BASIC_TRUCK(2),
@@ -99,6 +100,7 @@ public class Vehicle {
             throw new IllegalArgumentException("Invalid VehicleType value: " + value);
         }
     }
+    // get vehicle type name
     public String getVehicleTypeName() {
         return Vehicle.VehicleType.fromValue(type).name();
     }

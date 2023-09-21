@@ -6,17 +6,18 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-
+        // read login data from file
         HashMap<String, String> passwords = new HashMap<>();
         HashMap<String, Integer> userTypes = new HashMap<>();
         readLoginData(passwords, userTypes);
-
+        // ask user for username and password
         while (true) {
             Scanner scanner = new Scanner(System.in);
             System.out.print("Enter your username: ");
             String inputUserName = scanner.next();
             System.out.print("Enter your password: ");
             String inputPassword = scanner.next();
+            // check if username and password are correct
             if (passwords.containsKey(inputUserName)) {
                 String storedPassword = passwords.get(inputUserName);
                 if (storedPassword.equals(inputPassword)) {
@@ -36,15 +37,16 @@ public class Main {
             }
         }
     }
-
+    // read login data from file
     static void readLoginData(HashMap<String, String> passwords, HashMap<String, Integer> userTypes) {
         try {
+            // create a reader to login_data.txt file
             FileReader fileReader = new FileReader("resources/login_data.txt");
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String line;
-
+            // loop through all lines in the file
             while ((line = bufferedReader.readLine()) != null) {
-
+                // divide the line into parts and put it in variables
                 String[] parts = line.split(" ");
                 if (parts.length == 3) {
                     String username = parts[0];
@@ -57,6 +59,7 @@ public class Main {
             bufferedReader.close();
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
+            System.out.println("An error occurred while reading the file: " + e.getMessage());
         }
     }
 }
