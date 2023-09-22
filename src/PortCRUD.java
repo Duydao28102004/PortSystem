@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class PortCRUD {
+    // create a port
     static void createPort() {
         ArrayList<Port> ports = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
@@ -24,6 +25,7 @@ public class PortCRUD {
         ports.add(portAdd);
         writeBackToFile(ports, true);
     }
+    // auto generate port ID
     static int autoGeneratePortID() {
         int portID = 1;
         // create a reader to port_data.txt file
@@ -44,6 +46,7 @@ public class PortCRUD {
         // return port ID after calculate
         return portID;
     }
+    // read port from file
     static List<Port> readPorts() {
         ArrayList<Port> ports = new ArrayList<>();
         String line;
@@ -77,6 +80,7 @@ public class PortCRUD {
         // return a list after finished reading ports.
         return ports;
     }
+    // print all ports
     static void printPorts() {
         // loop through port list and print it out
         for (Port port : readPorts()) {
@@ -89,6 +93,7 @@ public class PortCRUD {
             System.out.println("   *********   ");
         }
     }
+    // update port
     static void updatePorts() {
         List<Port> ports = readPorts();
         Scanner scanner = new Scanner(System.in);
@@ -106,6 +111,7 @@ public class PortCRUD {
         // save the port back to file again
         writeBackToFile(ports, false);
     }
+    // update specific port with given port ID
     static void updateSpecificPort(int PortID) {
         Scanner scanner = new Scanner(System.in);
         int portID = PortID - 1;
@@ -113,6 +119,7 @@ public class PortCRUD {
         enterUpdatePortInfo(ports, portID, scanner);
         writeBackToFile(ports, false);
     }
+    // enter information to update port
     static void enterUpdatePortInfo(List<Port> ports, int portID, Scanner scanner) {
         // ask user for information they want to update
         System.out.print("Enter new port name (Enter skip to skip): ");
@@ -141,6 +148,7 @@ public class PortCRUD {
             ports.get(portID).setLandingCap(Integer.parseInt(temp5));
         }
     }
+    // delete port
     static void deletePort() {
         List<Port> ports = ContainerCRUD.readContainer();
         Scanner scanner = new Scanner(System.in);
@@ -170,6 +178,7 @@ public class PortCRUD {
         writeBackToFile(ports, false);
         ContainerCRUD.writeBackToFileContainer(ports);
     }
+    // write back to file
     static void writeBackToFile(List<Port> ports, Boolean append) {
         try {
             // create a write to port_data.txt

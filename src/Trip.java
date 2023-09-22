@@ -24,6 +24,8 @@ public class Trip {
         this.tripStatus = tripStatus;
     }
 
+    // getter and setter methods
+
     public int getTrip_number() {
         return trip_number;
     }
@@ -88,6 +90,7 @@ public class Trip {
         this.fuelConsumption = fuelConsumption;
     }
 
+    // get an set trip status in integer
     public int getTripStatus() {
         return tripStatus;
     }
@@ -95,6 +98,8 @@ public class Trip {
     public void setTripStatus(int tripStatus) {
         this.tripStatus = tripStatus;
     }
+
+    // enum for trip status
     public enum TripStatus {
         WAITING_APPROVE(1),
         APPROVED(2),
@@ -109,7 +114,6 @@ public class Trip {
         public int getValue() {
             return value;
         }
-
         public static TripStatus fromValue(int value) {
             for (TripStatus status : TripStatus.values()) {
                 if (status.value == value) {
@@ -119,6 +123,7 @@ public class Trip {
             throw new IllegalArgumentException("Invalid TripStatus value: " + value);
         }
     }
+    // get trip status in string
     public String getTripStatusName() {
         return TripStatus.fromValue(tripStatus).name();
     }
