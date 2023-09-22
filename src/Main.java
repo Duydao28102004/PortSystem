@@ -6,11 +6,20 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+        System.out.println("COSC2081 GROUP ASSIGNMENT");
+        System.out.println("CONTAINER PORT MANAGEMENT SYSTEM");
+        System.out.println("Instructor: Mr. Minh Vu & Dr. Phong Ngo");
+        System.out.println("Team: 23");
+        System.out.println("Dao Bao Duy - s3978826\n" +
+                "Tran Luu Quang Tung - s3978481\n" +
+                "Nguyen Duy Anh - s4022628\n" +
+                "Nguyen Huy Anh - s3956092\n");
         // read login data from file
         HashMap<String, String> passwords = new HashMap<>();
         HashMap<String, Integer> userTypes = new HashMap<>();
         readLoginData(passwords, userTypes);
         // ask user for username and password
+        System.out.println("LOGIN");
         while (true) {
             Scanner scanner = new Scanner(System.in);
             System.out.print("Enter your username: ");
