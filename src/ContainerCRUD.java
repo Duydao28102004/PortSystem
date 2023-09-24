@@ -83,7 +83,7 @@ public class ContainerCRUD {
                 // check all parts in correct format
                 if (parts.length >= 4) {
                     // put each part to temp container
-                    int portID = Integer.parseInt(parts[0]) - 1;
+                    int portID = Integer.parseInt(parts[0]);
                     double weight = Double.parseDouble(parts[1]);
                     int type = Integer.parseInt(parts[2]);
                     int serialCode = Integer.parseInt(parts[3]);
