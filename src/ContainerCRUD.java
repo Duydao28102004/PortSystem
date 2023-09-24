@@ -89,7 +89,11 @@ public class ContainerCRUD {
                     int serialCode = Integer.parseInt(parts[3]);
                     Container tempCon = new Container(weight, type, serialCode);
                     // put temp container back to correct port in the list
-                    ports.get(portID).addContainer(tempCon);
+                    for (Port port : ports) {
+                        if (portID == port.getP_number()) {
+                            port.getContainers().add(tempCon);
+                        }
+                    }
                 } else {
                     System.err.println("Invalid line format: " + line);
                 }
