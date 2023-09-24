@@ -132,6 +132,7 @@ public class VehicleCRUD {
         for (Vehicle vehicle : allVehicles) {
             System.out.println("Vehicle ID: " + vehicle.getVehicle_number());
             System.out.println("Vehicle Name: " + vehicle.getVehicleName());
+            System.out.println("Current Fuel: " + vehicle.getCurrentFuel());
             System.out.println("Fuel Capacity: " + vehicle.getFuelCapacity());
             System.out.println("Carrying Capacity: " + vehicle.getCarryingCapacity());
             System.out.println("Type: " + vehicle.getVehicleTypeName());
@@ -156,6 +157,7 @@ public class VehicleCRUD {
         for (Vehicle vehicle : ports.get(PortID - 1).getVehicles()) {
             System.out.println("Vehicle ID: " + vehicle.getVehicle_number());
             System.out.println("Vehicle Name: " + vehicle.getVehicleName());
+            System.out.println("Current Fuel: " + vehicle.getCurrentFuel());
             System.out.println("Fuel Capacity: " + vehicle.getFuelCapacity());
             System.out.println("Carrying Capacity: " + vehicle.getCarryingCapacity());
             System.out.println("Type: " + vehicle.getVehicleTypeName());
@@ -177,6 +179,7 @@ public class VehicleCRUD {
         for (Vehicle vehicle : vehicles) {
             System.out.println("Vehicle ID: " + vehicle.getVehicle_number());
             System.out.println("Vehicle Name: " + vehicle.getVehicleName());
+            System.out.println("Current Fuel: " + vehicle.getCurrentFuel());
             System.out.println("Fuel Capacity: " + vehicle.getFuelCapacity());
             System.out.println("Carrying Capacity: " + vehicle.getCarryingCapacity());
             System.out.println("Type: " + vehicle.getVehicleTypeName());

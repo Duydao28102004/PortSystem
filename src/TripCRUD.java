@@ -50,13 +50,15 @@ public class TripCRUD {
         }
 
         // print vehicles in starting port out
+        int vehicle_num = 1;
         for (Vehicle vehicle : vehiclesInStartingPort) {
-            System.out.println("Vehicle ID: " + vehicle.getVehicle_number());
+            System.out.println("Vehicle ID: " + vehicle_num);
             System.out.println("Vehicle Name: " + vehicle.getVehicleName());
             System.out.println("Fuel Capacity: " + vehicle.getFuelCapacity());
             System.out.println("Carrying Capacity: " + vehicle.getCarryingCapacity());
             System.out.println("Type: " + vehicle.getVehicleTypeName());
             System.out.println("----------------------------------");
+            vehicle_num ++;
         }
 
         // ask users to select the vehicle
@@ -64,11 +66,7 @@ public class TripCRUD {
         int selectedVehicleID = scanner.nextInt();
 
         // Find the selected vehicle
-        Vehicle selectedVehicle = null;
-        for (Vehicle vehicle : vehiclesInStartingPort) {
-            if (vehicle.getVehicle_number() == selectedVehicleID) ;
-            selectedVehicle = vehicle;
-        }
+        Vehicle selectedVehicle = vehiclesInStartingPort.get(selectedVehicleID - 1);
 
         // Check if destination port available
         if (!isDestinationPortAvailable(destinationPort, selectedVehicle)) {

@@ -269,7 +269,6 @@ public class ContainerCRUD {
         System.out.print("Enter the container ID you want to delete: ");
         int deleteContainerID = 0;
         while (true) {
-            System.out.print("Enter the container ID you want to update: ");
             deleteContainerID = scanner.nextInt();
             if (containersInPort.size() >= deleteContainerID - 1) {
                 break;
