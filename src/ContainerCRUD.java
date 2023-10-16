@@ -83,13 +83,17 @@ public class ContainerCRUD {
                 // check all parts in correct format
                 if (parts.length >= 4) {
                     // put each part to temp container
-                    int portID = Integer.parseInt(parts[0]) - 1;
+                    int portID = Integer.parseInt(parts[0]);
                     double weight = Double.parseDouble(parts[1]);
                     int type = Integer.parseInt(parts[2]);
                     int serialCode = Integer.parseInt(parts[3]);
                     Container tempCon = new Container(weight, type, serialCode);
                     // put temp container back to correct port in the list
-                    ports.get(portID).addContainer(tempCon);
+                    for (Port port : ports) {
+                        if (portID == port.getP_number()) {
+                            port.getContainers().add(tempCon);
+                        }
+                    }
                 } else {
                     System.err.println("Invalid line format: " + line);
                 }
@@ -265,7 +269,6 @@ public class ContainerCRUD {
         System.out.print("Enter the container ID you want to delete: ");
         int deleteContainerID = 0;
         while (true) {
-            System.out.print("Enter the container ID you want to update: ");
             deleteContainerID = scanner.nextInt();
             if (containersInPort.size() >= deleteContainerID - 1) {
                 break;

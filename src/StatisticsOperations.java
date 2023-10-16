@@ -20,9 +20,9 @@ public class StatisticsOperations {
     static void listTripFromDays() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.print("Enter starting day: ");
+            System.out.print("Enter starting day(YYYY-MM-DD): ");
             String startingDate = scanner.next();
-            System.out.print("Enter end day: ");
+            System.out.print("Enter end day(YYYY-MM-DD): ");
             String endingDate = scanner.next();
             // check if date format is correct
             if (startingDate.length() == 10 && endingDate.length() == 10) {
@@ -36,7 +36,7 @@ public class StatisticsOperations {
     static void listTripInDay() {
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.print("Enter a day that you want to print all trip: ");
+            System.out.print("Enter a day that you want to print all trip(YYYY-MM-DD): ");
             String date = scanner.next();
             // check if date format is correct
             if (date.length() == 10) {
