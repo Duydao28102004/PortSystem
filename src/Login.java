@@ -96,8 +96,16 @@ public class Login {
             }
         });
 
+        exitButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
+
         frame.setVisible(true);
     }
+
 
     // Replace this method with your authentication logic
     private static boolean authenticate(String username, String password) {
