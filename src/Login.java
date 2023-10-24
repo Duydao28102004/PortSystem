@@ -6,13 +6,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Scanner;
 
 public class Login {
     public static void main(String[] args) {
         JFrame frame = new JFrame("Login");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(1280, 720);
+        frame.setSize(500, 500);
 
         JPanel panel = new JPanel(new GridBagLayout());
         frame.add(panel);
@@ -36,7 +35,7 @@ public class Login {
         // Add components to the panel with GridBagConstraints to center them
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.gridwidth = 2;
+        gbc.gridwidth = 3;
         panel.add(heading, gbc);
 
         gbc.gridy = 1;
@@ -45,22 +44,25 @@ public class Login {
         panel.add(usernameLabel, gbc);
 
         gbc.gridx = 1;
+        gbc.gridwidth = 2;
         panel.add(usernameField, gbc);
 
         gbc.gridy = 2;
         gbc.gridx = 0;
+        gbc.gridwidth = 1;
         panel.add(passwordLabel, gbc);
 
         gbc.gridx= 1;
+        gbc.gridwidth = 2;
         panel.add(passwordField, gbc);
-
-        gbc.gridwidth = 3;
-        gbc.gridy = 3;
-        gbc.gridx = 0;
-        panel.add(loginButton, gbc);
 
         gbc.gridy = 3;
         gbc.gridx = 1;
+        gbc.gridwidth = 1;
+        panel.add(loginButton, gbc);
+
+        gbc.gridy = 3;
+        gbc.gridx = 2;
         panel.add(exitButton, gbc);
 
 
